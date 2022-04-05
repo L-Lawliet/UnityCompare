@@ -105,7 +105,7 @@ namespace UnityCompare
 
             var item = FindItem(id, m_Root) as CompareTreeViewItem<ComponentCompareInfo>;
 
-            CompareInspector.GetWindow(item.info.leftComponent, item.info.rightComponent);
+            CompareInspector.GetWindow(item.info, item.info.leftComponent, item.info.rightComponent);
         }
 
         protected override void ExpandedStateChanged()

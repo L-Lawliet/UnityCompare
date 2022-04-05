@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace UnityCompare
 {
+    [Flags]
     public enum GameObjectCompareType
     {
         none = 0,

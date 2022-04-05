@@ -10,6 +10,8 @@ namespace UnityCompare
     [Serializable]
     public abstract class CompareInfo
     {
+        protected static readonly StringBuilder BUILDER_BUFFER = new StringBuilder();
+
         [SerializeField]
         private int m_ID;
 
@@ -65,6 +67,8 @@ namespace UnityCompare
         }
 
         public abstract bool AllEqual();
+
+        public abstract string GetUnequalMessage();
 
         public CompareInfo()
         {

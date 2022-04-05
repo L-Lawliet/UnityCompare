@@ -130,7 +130,7 @@ namespace UnityCompare
 
             var item = FindItem(id, m_Root) as CompareTreeViewItem<GameObjectCompareInfo>;
 
-            CompareInspector.GetWindow(item.info.leftGameObject, item.info.rightGameObject);
+            CompareInspector.GetWindow(item.info, item.info.leftGameObject, item.info.rightGameObject);
         }
 
         protected override void DoubleClickedItem(int id)

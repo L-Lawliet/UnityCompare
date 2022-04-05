@@ -432,6 +432,7 @@ namespace UnityCompare
                         {
                             contentEqual = false;
 
+                            info.unequalPaths.Add(path);
                             //Debug.LogFormat("name:{0} property:{1}", name, path);
                         }
                     }
