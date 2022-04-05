@@ -114,6 +114,23 @@ namespace UnityCompare
             }
 
             #region child
+
+            CompareChild(left, right, info);
+
+            #endregion
+
+            #region component
+
+            if (info.missType == MissType.allExist)
+            {
+                CompareComponent(left, right, ref info);
+            }
+
+            #endregion
+        }
+
+        private static void CompareChild(GameObject left, GameObject right, GameObjectCompareInfo info)
+        {
             var leftChildCount = left.transform.childCount;
             var rightChildCount = right.transform.childCount;
 
@@ -123,92 +140,102 @@ namespace UnityCompare
             bool childCountEqual = true;
             bool childContentEqual = true;
 
-            MissType missType;
+            if(leftChildCount != rightChildCount)
+            {
+                childCountEqual = false;
+            }
 
             while (leftIndex < leftChildCount || rightIndex < rightChildCount)
             {
-                string name;
-
-                GameObject leftChildGO;
-                GameObject rightChildGO;
-
-
                 if (leftIndex >= leftChildCount)
                 {
-                    var rightChild = right.transform.GetChild(rightIndex);
+                    for (int i = rightIndex; i < rightChildCount; i++)
+                    {
+                        var rightChild = right.transform.GetChild(i);
 
-                    name = rightChild.name;
-                    leftChildGO = null;
-                    rightChildGO = rightChild.gameObject;
+                        var childInfo = AddChildInfo(info, null, rightChild.gameObject, rightChild.name, MissType.missLeft);
 
-                    missType = MissType.missLeft;
+                        if (!childInfo.AllEqual())
+                        {
+                            childContentEqual = false;
+                        }
+                    }
 
-                    rightIndex++;
+                    break;
                 }
                 else if (rightIndex >= rightChildCount)
                 {
-                    var leftChild = left.transform.GetChild(leftIndex);
+                    for (int i = leftIndex; i < leftChildCount; i++)
+                    {
+                        var leftChild = left.transform.GetChild(i);
 
-                    name = leftChild.name;
-                    leftChildGO = leftChild.gameObject;
-                    rightChildGO = null;
+                        var childInfo = AddChildInfo(info, leftChild.gameObject, null, leftChild.name, MissType.missRight);
 
-                    missType = MissType.missRight;
-
-                    leftIndex++;
+                        if (!childInfo.AllEqual())
+                        {
+                            childContentEqual = false;
+                        }
+                    }
+                    
+                    break;
                 }
                 else
                 {
                     var leftChild = left.transform.GetChild(leftIndex);
-                    var rightChild = right.transform.GetChild(rightIndex);
 
-                    if (leftChild.name == rightChild.name)
+                    var index = -1;
+
+                    for (int i = rightIndex; i < rightChildCount; i++)
                     {
-                        name = leftChild.name;
-                        leftChildGO = leftChild.gameObject;
-                        rightChildGO = rightChild.gameObject;
+                        var rightChild = right.transform.GetChild(i);
 
-                        missType = MissType.allExist;
+                        if (leftChild.name == rightChild.name)
+                        {
+                            index = i;
+                            break;
+                        }
+                    }
+
+                    if(index == -1)
+                    {
+                        var childInfo = AddChildInfo(info, leftChild.gameObject, null, leftChild.name, MissType.missRight);
+
+                        if (!childInfo.AllEqual())
+                        {
+                            childContentEqual = false;
+                        }
 
                         leftIndex++;
-                        rightIndex++;
                     }
                     else
                     {
-                        childCountEqual = false;
+                        Transform rightChild = null;
+                        GameObjectCompareInfo childInfo = null;
 
-                        if (leftIndex <= rightIndex)
+                        for (int i = rightIndex; i < index; i++)
                         {
-                            name = leftChild.name;
-                            leftChildGO = leftChild.gameObject;
-                            rightChildGO = null;
+                            rightChild = right.transform.GetChild(i);
 
-                            missType = MissType.missRight;
+                            childInfo = AddChildInfo(info, null, rightChild.gameObject, rightChild.name, MissType.missLeft);
 
-                            leftIndex++;
+                            if (!childInfo.AllEqual())
+                            {
+                                childContentEqual = false;
+                            }
                         }
-                        else
+
+                        rightChild = right.transform.GetChild(index);
+
+                        childInfo = AddChildInfo(info, leftChild.gameObject, rightChild.gameObject, leftChild.name, MissType.allExist);
+
+                        if (!childInfo.AllEqual())
                         {
-                            name = rightChild.name;
-                            leftChildGO = null;
-                            rightChildGO = rightChild.gameObject;
-
-                            missType = MissType.missLeft;
-
-                            rightIndex++;
+                            childContentEqual = false;
                         }
+
+                        leftIndex++;
+                        rightIndex = index + 1;
                     }
-                }
-
-                var childInfo = CompareGameObject(leftChildGO, rightChildGO, name, info.depth + 1, missType);
-
-                childInfo.parent = info;
-
-                info.children.Add(childInfo);
-
-                if (!childInfo.AllEqual())
-                {
-                    childContentEqual = false;
                 }
             }
 
@@ -221,16 +248,17 @@ namespace UnityCompare
             {
                 info.gameObjectCompareType |= GameObjectCompareType.childContentEqual;
             }
-            #endregion
+        }
 
-            #region component
+        private static GameObjectCompareInfo AddChildInfo(GameObjectCompareInfo parent, GameObject left, GameObject right, string name, MissType missType)
+        {
+            var childInfo = CompareGameObject(left, right, name, parent.depth + 1, missType);
 
-            if (info.missType == MissType.allExist)
-            {
-                CompareComponent(left, right, ref info);
-            }
+            childInfo.parent = parent;
 
-            #endregion
+            parent.children.Add(childInfo);
+
+            return childInfo;
         }
 
         public static void CompareComponent(GameObject left, GameObject right, ref GameObjectCompareInfo info)
@@ -247,88 +275,104 @@ namespace UnityCompare
             bool componentCountEqual = true;
             bool componentContentEqual = true;
 
-            MissType missType;
+            if (leftCount != rightCount)
+            {
+                componentCountEqual = false;
+            }
 
             while (leftIndex < leftCount || rightIndex < rightCount)
             {
-                string name;
-
-                Component leftComponent;
-                Component rightComponent;
-
                 if (leftIndex >= leftCount)
                 {
-                    leftComponent = null;
-                    rightComponent = m_RightComponentList[rightIndex];
+                    for (int i = rightIndex; i < rightCount; i++)
+                    {
+                        var rightComponent = m_RightComponentList[rightIndex];
 
-                    name = rightComponent.GetType().FullName;
+                        var childInfo = AddComponentInfo(info, null, rightComponent, rightComponent.GetType().FullName, MissType.missLeft);
 
-                    missType = MissType.missLeft;
+                        if (!childInfo.AllEqual())
+                        {
+                            componentContentEqual = false;
+                        }
+                    }
 
-                    rightIndex++;
+                    break;
                 }
                 else if (rightIndex >= rightCount)
                 {
-                    leftComponent = m_LeftComponentList[leftIndex];
-                    rightComponent = null;
+                    for (int i = leftIndex; i < leftCount; i++)
+                    {
+                        var leftComponent = m_LeftComponentList[leftIndex];
 
-                    name = leftComponent.GetType().FullName;
+                        var childInfo = AddComponentInfo(info, leftComponent, null, leftComponent.GetType().FullName, MissType.missRight);
 
-                    missType = MissType.missRight;
+                        if (!childInfo.AllEqual())
+                        {
+                            componentContentEqual = false;
+                        }
+                    }
 
-                    leftIndex++;
+                    break;
                 }
                 else
                 {
-                    leftComponent = m_LeftComponentList[leftIndex];
-                    rightComponent = m_RightComponentList[rightIndex];
+                    var leftComponent = m_LeftComponentList[leftIndex];
 
-                    if (leftComponent.GetType() == rightComponent.GetType())
+                    var index = -1;
+
+                    for (int i = rightIndex; i < rightCount; i++)
                     {
-                        name = leftComponent.GetType().FullName;
+                        var rightComponent = m_RightComponentList[leftIndex];
 
-                        missType = MissType.allExist;
+                        if (leftComponent.GetType() == rightComponent.GetType())
+                        {
+                            index = i;
+                            break;
+                        }
+                    }
+
+                    if (index == -1)
+                    {
+                        var childInfo = AddComponentInfo(info, leftComponent, null, leftComponent.GetType().FullName, MissType.missRight);
+
+                        if (!childInfo.AllEqual())
+                        {
+                            componentContentEqual = false;
+                        }
 
                         leftIndex++;
-                        rightIndex++;
                     }
                     else
                     {
-                        componentCountEqual = false;
+                        Component rightComponent = null;
+                        ComponentCompareInfo childInfo = null;
 
-                        if (leftIndex <= rightIndex)
+                        for (int i = rightIndex; i < index; i++)
                         {
-                            rightComponent = null;
+                            rightComponent = m_RightComponentList[rightIndex];
 
-                            name = leftComponent.GetType().FullName;
+                            childInfo = AddComponentInfo(info, null, rightComponent, rightComponent.GetType().FullName, MissType.missLeft);
 
-                            missType = MissType.missRight;
-
-                            leftIndex++;
+                            if (!childInfo.AllEqual())
+                            {
+                                componentContentEqual = false;
+                            }
                         }
-                        else
+
+                        rightComponent = m_RightComponentList[index];
+
+                        childInfo = AddComponentInfo(info, leftComponent, rightComponent, leftComponent.GetType().FullName, MissType.allExist);
+
+                        if (!childInfo.AllEqual())
                         {
-                            leftComponent = null;
-
-                            name = rightComponent.GetType().FullName;
-
-                            missType = MissType.missLeft;
-
-                            rightIndex++;
+                            componentContentEqual = false;
                         }
+
+                        leftIndex++;
+                        rightIndex = index + 1;
                     }
                 }
 
-                var childInfo = CompareComponent(leftComponent, rightComponent, name, info.depth, missType, info.fileID);
-
-                childInfo.parent = info;
-
-                info.components.Add(childInfo);
-
-                if (!childInfo.AllEqual())
-                {
-                    componentContentEqual = false;
-                }
             }
 
             if (componentCountEqual)
@@ -342,7 +386,18 @@ namespace UnityCompare
             }
         }
 
-        public static ComponentCompareInfo CompareComponent(Component left, Component right, string name, int depth, MissType missType, int fileID)
+        private static ComponentCompareInfo AddComponentInfo(GameObjectCompareInfo parent, Component left, Component right, string name, MissType missType)
+        {
+            var componentInfo = CompareComponent(left, right, name, parent.depth, missType);
+
+            componentInfo.parent = parent;
+
+            parent.components.Add(componentInfo);
+
+            return componentInfo;
+        }
+
+        public static ComponentCompareInfo CompareComponent(Component left, Component right, string name, int depth, MissType missType)
         {
             ComponentCompareInfo info = new ComponentCompareInfo(name, depth, ++idCounter);
 
