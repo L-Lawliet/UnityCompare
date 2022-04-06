@@ -7,7 +7,6 @@ namespace UnityCompare
 {
     public class CompareInspector : EditorWindow
     {
-        [MenuItem("Tools/Compare/CompareInspector")]
         public static CompareInspector GetWindow(CompareInfo info, UnityEngine.Object left, UnityEngine.Object right)
         {
             var window = GetWindow<CompareInspector>();
@@ -72,45 +71,77 @@ namespace UnityCompare
 
         private void SetInfo(CompareInfo info)
         {
-            StringBuilder builder = new StringBuilder();
+            string unequalMessage = info.GetUnequalMessage();
 
-            builder.AppendLine("no equal item:");
+            if (string.IsNullOrWhiteSpace(unequalMessage))
+            {
+                m_UnequalMessage = "";
+            }
+            else
+            {
+                StringBuilder builder = new StringBuilder();
 
-            builder.AppendLine(info.GetUnequalMessage());
+                builder.AppendLine("no equal item:");
 
-            m_UnequalMessage = builder.ToString();
+                builder.AppendLine(info.GetUnequalMessage());
+
+                m_UnequalMessage = builder.ToString();
+            }
         }
 
         private void OnGUI()
         {
             GUILayout.BeginHorizontal();
 
-            OnEditor(m_LeftEditor);
+            OnEditor(m_Left, m_LeftEditor);
+            //OnField(m_Left);
 
             EditorGUILayout.Separator();
 
-            OnEditor(m_RightEditor);
+            OnEditor(m_Right, m_RightEditor);
+            //OnField(m_Right);
 
             GUILayout.EndHorizontal();
 
             OnUnequalMessage();
         }
 
-        private void OnEditor(Editor editor)
+        private void OnEditor(UnityEngine.Object obj, Editor editor)
         {
-            EditorGUILayout.BeginVertical(GUILayout.Width(this.position.width / 2 - 3));
+            EditorGUIUtility.wideMode = true;
 
-            m_ScrollPosition = EditorGUILayout.BeginScrollView(m_ScrollPosition);
+            var width = this.position.width / 2 - 3;
+
+            EditorGUILayout.BeginVertical(GUILayout.Width(width));
+
+            m_ScrollPosition = EditorGUILayout.BeginScrollView(m_ScrollPosition, GUILayout.ExpandWidth(true));
 
             if (editor!= null)
             {
-                editor.DrawHeader();
-                editor.OnInspectorGUI();
+                if(obj is GameObject)
+                {
+                    editor.DrawHeader();
+                }
+                else
+                {
+                    EditorGUIUtility.hierarchyMode = true;
+                    EditorGUILayout.InspectorTitlebar(false, editor);
+                    //EditorGUILayout.BeginVertical(EditorStyles.inspectorDefaultMargins, GUILayout.Width(width - 10));
+                    editor.OnInspectorGUI();
+                    //EditorGUILayout.EndVertical();
+                }  
+            }
+            else
+            {
+                Debug.Log(editor);
             }
 
             EditorGUILayout.EndScrollView();
 
             EditorGUILayout.EndVertical();
+
+            EditorGUIUtility.hierarchyMode = false;
+            EditorGUIUtility.wideMode = false;
         }
 
         private void OnUnequalMessage()
