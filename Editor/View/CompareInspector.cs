@@ -131,10 +131,6 @@ namespace UnityCompare
                     //EditorGUILayout.EndVertical();
                 }  
             }
-            else
-            {
-                Debug.Log(editor);
-            }
 
             EditorGUILayout.EndScrollView();
 

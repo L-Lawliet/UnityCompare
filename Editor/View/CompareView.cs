@@ -36,21 +36,6 @@ namespace UnityCompare
 
         [SerializeField]
         private bool m_ShowComponentView;
-        
-        [SerializeField]
-        private GameObjectCompareInfo m_ShowComponentTarget;
-
-        private GameObjectCompareInfo m_Info;
-
-        public GameObjectCompareInfo info
-        {
-            set
-            {
-                m_Info = value;
-
-                m_GOTree.Reload(m_Info);
-            }
-        }
 
         [SerializeField]
         private bool m_IsLeft;
@@ -95,14 +80,14 @@ namespace UnityCompare
                 m_GOTreeState = new TreeViewState();
             }
 
-            m_GOTree = new GameObjectTreeView(m_GOTreeState, m_Info, m_IsLeft);
+            m_GOTree = new GameObjectTreeView(m_GOTreeState, CompareData.rootInfo, m_IsLeft);
 
             if (m_ComponentTreeState == null)
             {
                 m_ComponentTreeState = new TreeViewState();
             }
 
-            m_ComponentTree = new ComponentTreeView(m_ComponentTreeState, m_ShowComponentTarget, m_IsLeft);
+            m_ComponentTree = new ComponentTreeView(m_ComponentTreeState, CompareData.showComponentTarget, m_IsLeft);
 
             CompareData.onShowStateChange += OnShowStateChange;
         }
@@ -127,9 +112,9 @@ namespace UnityCompare
         {
             if (m_ShowComponentView)
             {
-                if (m_ShowComponentTarget != null)
+                if (CompareData.showComponentTarget != null)
                 {
-                    PREV_CONTENT.text = m_ShowComponentTarget.name;
+                    PREV_CONTENT.text = CompareData.showComponentTarget.name;
                 }
                 else
                 {
@@ -203,14 +188,20 @@ namespace UnityCompare
 
             if (m_ShowComponentView)
             {
-                m_ShowComponentTarget = info;
-                m_ComponentTree.Reload(info);
+                CompareData.showComponentTarget = info;
+                m_ComponentTree.Reload(CompareData.showComponentTarget);
             }
         }
+
+        public void Reload()
+        {
+            m_GOTree.Reload(CompareData.rootInfo);
+        }
+
         private void OnShowStateChange()
         {
-            m_GOTree.Reload(m_Info);
-            m_ComponentTree.Reload(m_ShowComponentTarget);
+            m_GOTree.Reload(CompareData.rootInfo);
+            m_ComponentTree.Reload(CompareData.showComponentTarget);
         }
 
     }

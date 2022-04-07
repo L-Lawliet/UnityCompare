@@ -46,8 +46,6 @@ namespace UnityCompare
 
         private bool m_GameObjectChangeDirty;
 
-        private GameObjectCompareInfo m_GameObjectCompareInfo;
-
         SearchField m_SearchField;
 
         [SerializeField]
@@ -73,8 +71,6 @@ namespace UnityCompare
                 //m_SearchField = new SearchField();
 
                 //m_SearchField.downOrUpArrowKeyPressed += m_GameObjectTree.SetFocusAndEnsureSelectedItem;
-
-                Compare();
 
                 m_Initialized = true;
             }
@@ -241,10 +237,10 @@ namespace UnityCompare
         {
             if (m_LeftView.gameObject != null && m_RightView.gameObject != null)
             {
-                m_GameObjectCompareInfo = CompareUtility.ComparePrefab(m_LeftView.gameObject, m_RightView.gameObject);
+                CompareData.rootInfo = CompareUtility.ComparePrefab(m_LeftView.gameObject, m_RightView.gameObject);
 
-                m_LeftView.info = m_GameObjectCompareInfo;
-                m_RightView.info = m_GameObjectCompareInfo;
+                m_LeftView.Reload();
+                m_RightView.Reload();
             }
         }
     }

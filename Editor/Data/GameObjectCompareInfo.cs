@@ -35,7 +35,7 @@ namespace UnityCompare
             set { m_Components = value; }
         }
 
-        [NonSerialized]
+        [SerializeField]
         private GameObject m_LeftGameObject;
 
         public GameObject leftGameObject
@@ -44,7 +44,7 @@ namespace UnityCompare
             set { m_LeftGameObject = value; }
         }
 
-        [NonSerialized]
+        [SerializeField]
         private GameObject m_RightGameObject;
 
         public GameObject rightGameObject

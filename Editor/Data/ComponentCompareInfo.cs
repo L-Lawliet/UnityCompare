@@ -19,7 +19,7 @@ namespace UnityCompare
             set { m_ComponentCompareType = value; }
         }
 
-        [NonSerialized]
+        [SerializeField]
         private Component m_LeftComponent;
 
         public Component leftComponent
@@ -28,7 +28,7 @@ namespace UnityCompare
             set { m_LeftComponent = value; }
         }
 
-        [NonSerialized]
+        [SerializeField]
         private Component m_RightComponent;
 
         public Component rightComponent
