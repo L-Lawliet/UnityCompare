@@ -250,6 +250,13 @@ namespace UnityCompare
                 m_LeftView.Reload();
                 m_RightView.Reload();
             }
+            else
+            {
+                CompareData.rootInfo = null;
+
+                m_LeftView.Reload();
+                m_RightView.Reload();
+            }
         }
     }
 }
