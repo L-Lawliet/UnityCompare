@@ -49,7 +49,7 @@ namespace UnityCompare
         SearchField m_SearchField;
 
         [SerializeField]
-        private CompareData m_CompareData = new CompareData();
+        private CompareData m_CompareData;
 
         private void InitIfNeeded()
         {
@@ -80,7 +80,7 @@ namespace UnityCompare
         {
             if(m_CompareData == null)
             {
-                CompareData.InitInstance();
+                m_CompareData = CompareData.InitInstance();
             }
         }
 

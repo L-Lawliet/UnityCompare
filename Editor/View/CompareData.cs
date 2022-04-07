@@ -203,9 +203,14 @@ namespace UnityCompare
 
         #endregion
 
-        public static void InitInstance()
+        public static CompareData InitInstance()
         {
-            m_Instance = new CompareData();
+            if(m_Instance == null)
+            {
+                m_Instance = new CompareData();
+            }
+
+            return m_Instance;
         }
 
         public void OnBeforeSerialize()
