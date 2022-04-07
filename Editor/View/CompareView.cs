@@ -114,7 +114,7 @@ namespace UnityCompare
             {
                 if (CompareData.showComponentTarget != null)
                 {
-                    PREV_CONTENT.text = CompareData.showComponentTarget.name;
+                    PREV_CONTENT.text = string.Format("[{0}]\t{1}", m_GameObject.name, CompareData.showComponentTarget.name);
                 }
                 else
                 {
