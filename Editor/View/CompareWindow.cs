@@ -197,6 +197,14 @@ namespace UnityCompare
         {
             EditorGUILayout.BeginHorizontal(styles.styleToolBar);
 
+            if (GUILayout.Button("Compare", styles.styleToolButton, GUILayout.Width(80.0f)))
+            {
+                Compare();
+
+                m_LeftView.ChangeTree(false);
+                m_RightView.ChangeTree(false);
+            }
+
             GUILayout.FlexibleSpace();
 
             using (var check = new EditorGUI.ChangeCheckScope())
