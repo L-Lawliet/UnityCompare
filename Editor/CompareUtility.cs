@@ -486,18 +486,18 @@ namespace UnityCompare
                     {
                         if (leftType == typeof(GameObject))
                         {
-                            var leftPath = GetFullPath(left.objectReferenceValue as GameObject);
-                            var rightPath = GetFullPath(right.objectReferenceValue as GameObject);
+                            var leftPath = GetFullPath(left.objectReferenceValue as GameObject, true);
+                            var rightPath = GetFullPath(right.objectReferenceValue as GameObject, true);
 
                             if (leftPath == rightPath)
                             {
                                 return true;
                             }
                         }
-                        else if (leftType == typeof(Component))
+                        else if (typeof(Component).IsAssignableFrom(leftType))
                         {
-                            var leftPath = GetFullPath((left.objectReferenceValue as Component).gameObject);
-                            var rightPath = GetFullPath((right.objectReferenceValue as GameObject).gameObject);
+                            var leftPath = GetFullPath((left.objectReferenceValue as Component).gameObject, true);
+                            var rightPath = GetFullPath((right.objectReferenceValue as Component).gameObject, true);
 
                             if (leftPath == rightPath)
                             {
@@ -537,11 +537,16 @@ namespace UnityCompare
             return true;
         }
 
-        private static string GetFullPath(GameObject go)
+        private static string GetFullPath(GameObject go, bool ignoreRoot = false)
         {
             string path = "/" + go.name;
             while (go.transform.parent != null)
             {
+                if(ignoreRoot && go.transform.parent.parent == null)
+                {
+                    break;
+                }
+
                 go = go.transform.parent.gameObject;
                 path = "/" + go.name + path;
             }
