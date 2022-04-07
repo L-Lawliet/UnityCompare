@@ -81,8 +81,10 @@ namespace UnityCompare
             m_Info = info;
 
             Reload();
-        }
 
+            m_ExpandedSet = new HashSet<int>(this.GetExpanded());
+        }
+        
         protected override void RowGUI(RowGUIArgs args)
         {
             var item = args.item as CompareTreeViewItem<GameObjectCompareInfo>;
@@ -218,6 +220,16 @@ namespace UnityCompare
                 var child = info.children[i];
 
                 if(child == null)
+                {
+                    continue;
+                }
+
+                if (!CompareData.showMiss && child.missType != MissType.allExist)
+                {
+                    continue;
+                }
+
+                if (!CompareData.showEqual && child.AllEqual())
                 {
                     continue;
                 }

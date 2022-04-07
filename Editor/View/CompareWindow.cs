@@ -21,6 +21,20 @@ namespace UnityCompare
             return window;
         }
 
+        private CompareStyles m_Styles;
+
+        public CompareStyles styles
+        {
+            get
+            {
+                if (m_Styles == null)
+                {
+                    m_Styles = new CompareStyles();
+                }
+
+                return m_Styles;
+            }
+        }
         [NonSerialized]
         private bool m_Initialized;
 
@@ -35,6 +49,9 @@ namespace UnityCompare
         private GameObjectCompareInfo m_GameObjectCompareInfo;
 
         SearchField m_SearchField;
+
+        [SerializeField]
+        private CompareData m_CompareData = new CompareData();
 
         private void InitIfNeeded()
         {
@@ -60,6 +77,14 @@ namespace UnityCompare
                 Compare();
 
                 m_Initialized = true;
+            }
+        }
+
+        private void OnEnable()
+        {
+            if(m_CompareData == null)
+            {
+                CompareData.InitInstance();
             }
         }
 
@@ -90,6 +115,8 @@ namespace UnityCompare
                 view.onGOTreeExpandedStateChanged -= OnExpandedStateChanged;
                 view.onShowGameObjectView -= OnShowGameObjectView;
                 view.onComponentTreeClickItemCallback -= OnComponentClickItemCallback;
+
+                view.Destory();
             }
             
         }
@@ -151,6 +178,10 @@ namespace UnityCompare
         {
             InitIfNeeded();
 
+            OnToolBar();
+
+            EditorGUILayout.Space();
+
             HandleTreeRoot();
 
             OnSearchBar();
@@ -168,7 +199,27 @@ namespace UnityCompare
 
         private void OnToolBar()
         {
+            EditorGUILayout.BeginHorizontal(styles.styleToolBar);
 
+            GUILayout.FlexibleSpace();
+
+            using (var check = new EditorGUI.ChangeCheckScope())
+            {
+                CompareData.showEqual = GUILayout.Toggle(CompareData.showEqual, styles.successImg, styles.styleToolButton, GUILayout.Width(30.0f));
+
+                CompareData.showMiss = GUILayout.Toggle(CompareData.showMiss, styles.inconclusiveImg, styles.styleToolButton, GUILayout.Width(30.0f));
+
+                if (check.changed)
+                {
+                    //刷新列表
+                    if(CompareData.onShowStateChange != null)
+                    {
+                        CompareData.onShowStateChange.Invoke();
+                    }
+                }
+            }
+
+            EditorGUILayout.EndHorizontal();
         }
 
         private void OnSearchBar()

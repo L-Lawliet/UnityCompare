@@ -103,6 +103,13 @@ namespace UnityCompare
             }
 
             m_ComponentTree = new ComponentTreeView(m_ComponentTreeState, m_ShowComponentTarget, m_IsLeft);
+
+            CompareData.onShowStateChange += OnShowStateChange;
+        }
+
+        public void Destory()
+        {
+            CompareData.onShowStateChange -= OnShowStateChange;
         }
 
         public void OnGUI()
@@ -200,5 +207,11 @@ namespace UnityCompare
                 m_ComponentTree.Reload(info);
             }
         }
+        private void OnShowStateChange()
+        {
+            m_GOTree.Reload(m_Info);
+            m_ComponentTree.Reload(m_ShowComponentTarget);
+        }
+
     }
 }
