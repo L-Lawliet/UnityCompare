@@ -37,6 +37,7 @@ namespace UnityCompare
             "m_GameObject",
             "m_Father",
             "m_Children",
+            "m_PrefabInstance",
         };
 
         private delegate bool PropertyComparer(SerializedProperty a, SerializedProperty b);
