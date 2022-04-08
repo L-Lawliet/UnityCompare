@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using UnityEditor;
 using UnityEngine;
 
@@ -35,6 +37,14 @@ namespace UnityCompare
             "m_GameObject",
             "m_Father",
             "m_Children",
+        };
+
+        private delegate bool PropertyComparer(SerializedProperty a, SerializedProperty b);
+
+        private static Dictionary<SerializedPropertyType, PropertyComparer> CustomPropertyComparers = new Dictionary<SerializedPropertyType, PropertyComparer>()
+        {
+            { SerializedPropertyType.ObjectReference, ObjectReferenceComparer},
+            { SerializedPropertyType.Generic, IgnoreComparer},
         };
 
         /// <summary>
@@ -415,10 +425,14 @@ namespace UnityCompare
 
                 var property = leftSO.GetIterator();
 
+                bool enterChildren = true;
+
                 if (property.Next(true)) //跳过base
                 {
                     do
                     {
+                        enterChildren = true;
+
                         var path = property.propertyPath;
 
                         if (string.IsNullOrWhiteSpace(path) || IsIngorePath(path))
@@ -428,15 +442,27 @@ namespace UnityCompare
 
                         var rightProperty = rightSO.FindProperty(path);
 
-                        if (!PropertyEqual(property, rightProperty))
+                        PropertyComparer comparer;
+
+                        if (!CustomPropertyComparers.TryGetValue(property.propertyType, out comparer))
+                        {
+                            comparer = SerializedProperty.DataEquals;
+                        }
+
+                        if (!comparer(property, rightProperty))
                         {
                             contentEqual = false;
 
                             info.unequalPaths.Add(path);
                             //Debug.LogFormat("name:{0} property:{1}", name, path);
                         }
+
+                        if(property.propertyType == SerializedPropertyType.ObjectReference)
+                        {
+                            enterChildren = false;
+                        }
                     }
-                    while (property.Next(false));
+                    while (property.Next(enterChildren));
                 }
 
                 leftSO.Dispose();
@@ -451,90 +477,78 @@ namespace UnityCompare
             return info;
         }
 
-        private static bool PropertyEqual(SerializedProperty left, SerializedProperty right)
+        private static bool IgnoreComparer(SerializedProperty left, SerializedProperty right)
         {
-            switch (left.propertyType)
-            {
-                case SerializedPropertyType.ObjectReference:
-
-                    if (left.objectReferenceValue == null && right.objectReferenceValue == null)
-                    {
-                        return true;
-                    }
-                    else if (left.objectReferenceValue == null || right.objectReferenceValue == null)
-                    {
-                        return false;
-                    }
-
-                    AssetDatabase.TryGetGUIDAndLocalFileIdentifier(left.objectReferenceValue, out string leftGUID, out long leftID);
-                    AssetDatabase.TryGetGUIDAndLocalFileIdentifier(right.objectReferenceValue, out string rightGUID, out long rightID);
-
-                    if (leftGUID == rightGUID)
-                    {
-                        return true;
-                    }
-
-                    if (leftGUID == "" && rightGUID == "")
-                    {
-                        return true;
-                    }
-
-                    var leftType = left.objectReferenceValue.GetType();
-                    var rightType = right.objectReferenceValue.GetType();
-
-                    if (leftType == rightType)
-                    {
-                        if (leftType == typeof(GameObject))
-                        {
-                            var leftPath = GetFullPath(left.objectReferenceValue as GameObject, true);
-                            var rightPath = GetFullPath(right.objectReferenceValue as GameObject, true);
-
-                            if (leftPath == rightPath)
-                            {
-                                return true;
-                            }
-                        }
-                        else if (typeof(Component).IsAssignableFrom(leftType))
-                        {
-                            var leftPath = GetFullPath((left.objectReferenceValue as Component).gameObject, true);
-                            var rightPath = GetFullPath((right.objectReferenceValue as Component).gameObject, true);
-
-                            if (leftPath == rightPath)
-                            {
-                                return true;
-                            }
-                        }
-                    }
-                    return false;
-                case SerializedPropertyType.Generic: //数组相关
-                    if (left.isArray && right.isArray)
-                    {
-                        if (left.arraySize != right.arraySize)
-                        {
-                            return false;
-                        }
-
-                        for (int i = 0; i < left.arraySize; i++)
-                        {
-                            var leftElement = left.GetArrayElementAtIndex(i);
-                            var rightElement = right.GetArrayElementAtIndex(i);
-
-                            if (!PropertyEqual(leftElement, rightElement))
-                            {
-                                return false;
-                            }
-                        }
-
-                        return true;
-                    }
-                    else
-                    {
-                        return SerializedProperty.DataEquals(left, right);
-                    }
-                default:
-                    return SerializedProperty.DataEquals(left, right);
-            }
             return true;
+        }
+
+        private static bool ObjectReferenceComparer(SerializedProperty left, SerializedProperty right)
+        {
+            if (left.objectReferenceValue == null && right.objectReferenceValue == null)
+            {
+                return true;
+            }
+            else if (left.objectReferenceValue == null || right.objectReferenceValue == null)
+            {
+                return false;
+            }
+
+            AssetDatabase.TryGetGUIDAndLocalFileIdentifier(left.objectReferenceValue, out string leftGUID, out long leftID);
+            AssetDatabase.TryGetGUIDAndLocalFileIdentifier(right.objectReferenceValue, out string rightGUID, out long rightID);
+
+            if (leftGUID == rightGUID)
+            {
+                return true;
+            }
+
+            if (leftGUID == "" && rightGUID == "")
+            {
+                return true;
+            }
+
+            var leftType = left.objectReferenceValue.GetType();
+            var rightType = right.objectReferenceValue.GetType();
+
+            if (leftType == rightType)
+            {
+                if (leftType == typeof(GameObject))
+                {
+                    var leftPath = GetFullPath(left.objectReferenceValue as GameObject, true);
+                    var rightPath = GetFullPath(right.objectReferenceValue as GameObject, true);
+
+                    if (leftPath == rightPath)
+                    {
+                        return true;
+                    }
+                }
+                else if (typeof(Component).IsAssignableFrom(leftType))
+                {
+                    var leftPath = GetFullPath((left.objectReferenceValue as Component).gameObject, true);
+                    var rightPath = GetFullPath((right.objectReferenceValue as Component).gameObject, true);
+
+                    if (leftPath == rightPath)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public static void PrintProperty(SerializedObject left, SerializedObject right)
+        {
+            StringBuilder builder = new StringBuilder();
+
+            var property = left.GetIterator();
+
+            while (property.Next(true))
+            {
+                var rightProperty = right.FindProperty(property.propertyPath);
+
+                builder.AppendFormat("path:{0}\ttype:{1}\tdataEquals:{2}\n", property.propertyPath, property.propertyType, SerializedProperty.DataEquals(property, rightProperty));
+            }
+
+            Debug.Log(builder.ToString());
         }
 
         private static string GetFullPath(GameObject go, bool ignoreRoot = false)
