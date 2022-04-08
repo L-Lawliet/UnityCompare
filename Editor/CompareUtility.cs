@@ -485,6 +485,11 @@ namespace UnityCompare
 
         private static bool ObjectReferenceComparer(SerializedProperty left, SerializedProperty right)
         {
+            if(left == null || right == null)
+            {
+                return false;
+            }
+
             if (left.objectReferenceValue == null && right.objectReferenceValue == null)
             {
                 return true;
