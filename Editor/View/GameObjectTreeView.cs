@@ -39,6 +39,10 @@ namespace UnityCompare
             m_IsLeft = isLeft;
 
             Reload();
+
+            ExpandAll();
+
+            m_ExpandedSet = new HashSet<int>(GetExpanded());
         }
 
         protected override TreeViewItem BuildRoot()
@@ -82,7 +86,9 @@ namespace UnityCompare
 
             Reload();
 
-            m_ExpandedSet = new HashSet<int>(this.GetExpanded());
+            ExpandAll();
+
+            m_ExpandedSet = new HashSet<int>(GetExpanded());
         }
         
         protected override void RowGUI(RowGUIArgs args)

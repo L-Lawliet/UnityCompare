@@ -164,6 +164,15 @@ namespace UnityCompare
             set { m_Instance.m_ShowMiss = value; }
         }
 
+        [SerializeField]
+        private Vector2 m_GameObjectTreeScroll = new Vector2();
+
+        public static Vector2 gameObjectTreeScroll
+        {
+            get { return m_Instance.m_GameObjectTreeScroll; }
+            set { m_Instance.m_GameObjectTreeScroll = value; }
+        }
+
         [NonSerialized]
         private GameObjectCompareInfo m_RootInfo;
 

@@ -148,15 +148,25 @@ namespace UnityCompare
 
         private void OnTreeView()
         {
-            Rect rect = GUILayoutUtility.GetRect(0, 100000, 0, 100000);
-
             if (m_ShowComponentView)
             {
+                Rect rect = GUILayoutUtility.GetRect(0, 100000, 0, 100000);
                 m_ComponentTree.OnGUI(rect);
             }
             else
             {
+                if(m_GOTreeState.scrollPos != CompareData.gameObjectTreeScroll)
+                {
+                    m_GOTreeState.scrollPos = CompareData.gameObjectTreeScroll;
+                }
+
+                Rect rect = GUILayoutUtility.GetRect(0, 100000, 0, 100000);
                 m_GOTree.OnGUI(rect);
+
+                if (m_GOTreeState.scrollPos != CompareData.gameObjectTreeScroll)
+                {
+                    CompareData.gameObjectTreeScroll = m_GOTreeState.scrollPos;
+                }
             }
         }
 
