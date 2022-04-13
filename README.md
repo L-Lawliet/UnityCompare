@@ -44,6 +44,7 @@
 
 - Inpector：显示GameObject和Component的信息
 - 警告栏：会显示具体不相等的字段名
+
 ![Inpector界面](/wiki/images/7.jpg)
 
 ## 操作
