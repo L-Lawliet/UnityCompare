@@ -3,8 +3,8 @@
     public enum MissType
     {
         none,
-        missLeft,
-        missRight,
-        allExist,
+        missLeft, //左边没有对应的对象
+        missRight, //右边没有对应的对象
+        allExist, //左右都存在
     }
 }

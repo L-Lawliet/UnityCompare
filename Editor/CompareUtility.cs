@@ -41,8 +41,17 @@ namespace UnityCompare
             "m_RootOrder",
         };
 
+        /// <summary>
+        /// 属性对比器
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns>相等则返回True</returns>
         private delegate bool PropertyComparer(SerializedProperty a, SerializedProperty b);
 
+        /// <summary>
+        /// 自定义的属性对比器
+        /// </summary>
         private static Dictionary<SerializedPropertyType, PropertyComparer> CustomPropertyComparers = new Dictionary<SerializedPropertyType, PropertyComparer>()
         {
             { SerializedPropertyType.ObjectReference, ObjectReferenceComparer},
@@ -141,6 +150,12 @@ namespace UnityCompare
             #endregion
         }
 
+        /// <summary>
+        /// 对比子对象
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <param name="info"></param>
         private static void CompareChild(GameObject left, GameObject right, GameObjectCompareInfo info)
         {
             var leftChildCount = left.transform.childCount;
@@ -262,6 +277,15 @@ namespace UnityCompare
             }
         }
 
+        /// <summary>
+        /// 添加子对象信息
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <param name="name"></param>
+        /// <param name="missType"></param>
+        /// <returns></returns>
         private static GameObjectCompareInfo AddChildInfo(GameObjectCompareInfo parent, GameObject left, GameObject right, string name, MissType missType)
         {
             var childInfo = CompareGameObject(left, right, name, parent.depth + 1, missType);
@@ -273,6 +297,12 @@ namespace UnityCompare
             return childInfo;
         }
 
+        /// <summary>
+        /// 对比组件
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <param name="info"></param>
         public static void CompareComponent(GameObject left, GameObject right, ref GameObjectCompareInfo info)
         {
             left.GetComponents(m_LeftComponentList);
@@ -398,6 +428,15 @@ namespace UnityCompare
             }
         }
 
+        /// <summary>
+        /// 添加组件信息
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <param name="name"></param>
+        /// <param name="missType"></param>
+        /// <returns></returns>
         private static ComponentCompareInfo AddComponentInfo(GameObjectCompareInfo parent, Component left, Component right, string name, MissType missType)
         {
             var componentInfo = CompareComponent(left, right, name, parent.depth, missType);
@@ -409,6 +448,15 @@ namespace UnityCompare
             return componentInfo;
         }
 
+        /// <summary>
+        /// 对比组件
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <param name="name"></param>
+        /// <param name="depth"></param>
+        /// <param name="missType"></param>
+        /// <returns></returns>
         public static ComponentCompareInfo CompareComponent(Component left, Component right, string name, int depth, MissType missType)
         {
             ComponentCompareInfo info = new ComponentCompareInfo(name, depth, ++idCounter);
@@ -479,11 +527,23 @@ namespace UnityCompare
             return info;
         }
 
+        /// <summary>
+        /// 忽略处理的属性对比器
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
         private static bool IgnoreComparer(SerializedProperty left, SerializedProperty right)
         {
             return true;
         }
 
+        /// <summary>
+        /// 引用对象对比器
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
         private static bool ObjectReferenceComparer(SerializedProperty left, SerializedProperty right)
         {
             if(left == null || right == null)
@@ -542,6 +602,11 @@ namespace UnityCompare
             return false;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
         public static void PrintProperty(SerializedObject left, SerializedObject right)
         {
             StringBuilder builder = new StringBuilder();
@@ -558,6 +623,12 @@ namespace UnityCompare
             Debug.Log(builder.ToString());
         }
 
+        /// <summary>
+        /// 返回GameObject的全局路径（从根节点到当前节点的路径）
+        /// </summary>
+        /// <param name="go"></param>
+        /// <param name="ignoreRoot"></param>
+        /// <returns></returns>
         private static string GetFullPath(GameObject go, bool ignoreRoot = false)
         {
             string path = "/" + go.name;
@@ -574,6 +645,11 @@ namespace UnityCompare
             return path;
         }
 
+        /// <summary>
+        /// 是否为忽略的路径
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         private static bool IsIngorePath(string path)
         {
             for (int i = 0; i < ingorePath.Length; i++)

@@ -5,11 +5,28 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
+/// <summary>
+/// 
+/// author:罐子（Lawliet）
+/// vindicator:Component的对比信息
+/// versions:0.0.1
+/// introduce:保存Component的对比信息数据
+/// note:
+/// 
+/// 
+/// list:
+/// 
+/// 
+/// 
+/// </summary>
 namespace UnityCompare
 {
     [Serializable]
     public class ComponentCompareInfo : CompareInfo
     {
+        /// <summary>
+        /// Component对比的状态
+        /// </summary>
         [SerializeField]
         private ComponentCompareType m_ComponentCompareType;
 
@@ -19,6 +36,9 @@ namespace UnityCompare
             set { m_ComponentCompareType = value; }
         }
 
+        /// <summary>
+        /// 左边的Component对象
+        /// </summary>
         [SerializeField]
         private Component m_LeftComponent;
 
@@ -28,6 +48,9 @@ namespace UnityCompare
             set { m_LeftComponent = value; }
         }
 
+        /// <summary>
+        /// 右边的Component对象
+        /// </summary>
         [SerializeField]
         private Component m_RightComponent;
 
@@ -37,6 +60,9 @@ namespace UnityCompare
             set { m_RightComponent = value; }
         }
 
+        /// <summary>
+        /// 保存不相等的Property path
+        /// </summary>
         private List<string> m_UnequalPaths = new List<string>();
 
         public List<string> unequalPaths
@@ -45,11 +71,19 @@ namespace UnityCompare
             set { m_UnequalPaths = value; }
         }
 
+        /// <summary>
+        /// 是否全部相等
+        /// </summary>
+        /// <returns></returns>
         public override bool AllEqual()
         {
             return m_ComponentCompareType == ComponentCompareType.allEqual;
         }
 
+        /// <summary>
+        /// 返回不相等的提示信息
+        /// </summary>
+        /// <returns></returns>
         public override string GetUnequalMessage()
         {
             BUILDER_BUFFER.Clear();

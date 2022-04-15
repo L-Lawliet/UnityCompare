@@ -5,13 +5,33 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
+/// <summary>
+/// 
+/// author:罐子（Lawliet）
+/// vindicator:对比信息
+/// versions:0.0.1
+/// introduce:保存对比信息数据
+/// note:
+/// 
+/// 
+/// list:
+/// 
+/// 
+/// 
+/// </summary>
 namespace UnityCompare
 {
     [Serializable]
     public abstract class CompareInfo
     {
+        /// <summary>
+        /// 用于拼接信息的Buffer
+        /// </summary>
         protected static readonly StringBuilder BUILDER_BUFFER = new StringBuilder();
 
+        /// <summary>
+        /// 每个信息的ID值
+        /// </summary>
         [SerializeField]
         private int m_ID;
 
@@ -21,6 +41,11 @@ namespace UnityCompare
             set { m_ID = value; }
         }
 
+        /// <summary>
+        /// 每个信息的名称
+        /// GameObject：GameObject的名字
+        /// Component：Component的类型
+        /// </summary>
         [SerializeField]
         private string m_Name;
 
@@ -30,6 +55,9 @@ namespace UnityCompare
             set { m_Name = value; }
         }
 
+        /// <summary>
+        /// 所在树的深度
+        /// </summary>
         [SerializeField]
         private int m_Depth;
 
@@ -39,6 +67,9 @@ namespace UnityCompare
             set { m_Depth = value; }
         }
 
+        /// <summary>
+        /// 父节点
+        /// </summary>
         [NonSerialized]
         private CompareInfo m_Parent;
 
@@ -48,6 +79,9 @@ namespace UnityCompare
             set { m_Parent = value; }
         }
 
+        /// <summary>
+        /// 对比时，左右对象缺失情况
+        /// </summary>
         [SerializeField]
         private MissType m_MissType;
 
@@ -57,17 +91,16 @@ namespace UnityCompare
             set { m_MissType = value; }
         }
 
-        [SerializeField]
-        private int m_FileID;
-
-        public int fileID
-        {
-            get { return m_FileID; }
-            set { m_FileID = value; }
-        }
-
+        /// <summary>
+        /// 是否全部相同
+        /// </summary>
+        /// <returns></returns>
         public abstract bool AllEqual();
 
+        /// <summary>
+        /// 获取不相等
+        /// </summary>
+        /// <returns></returns>
         public abstract string GetUnequalMessage();
 
         public CompareInfo()

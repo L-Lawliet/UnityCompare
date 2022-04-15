@@ -7,24 +7,67 @@ using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
+/// <summary>
+/// 
+/// author:罐子（Lawliet）
+/// vindicator:Component树视图
+/// versions:0.0.1
+/// introduce:
+/// note:
+/// 
+/// 
+/// list:
+/// 
+/// 
+/// 
+/// </summary>
 namespace UnityCompare
 {
     public class ComponentTreeView : TreeView
     {
-        private static Texture2D TEST_INCONCLUSIVE_ICON = EditorGUIUtility.FindTexture("TestInconclusive");
-        private static Texture2D TEST_PASS_ICON = EditorGUIUtility.FindTexture("TestPassed");
-        private static Texture2D TEST_FAILED_ICON = EditorGUIUtility.FindTexture("TestFailed");
+        private CompareStyles m_Styles;
 
+        public CompareStyles styles
+        {
+            get
+            {
+                if (m_Styles == null)
+                {
+                    m_Styles = new CompareStyles();
+                }
+
+                return m_Styles;
+            }
+        }
+
+        /// <summary>
+        /// GameObject信息
+        /// </summary>
         private GameObjectCompareInfo m_Info;
 
+        /// <summary>
+        /// 左边还是右边
+        /// </summary>
         private bool m_IsLeft;
 
+        /// <summary>
+        /// 单击回调
+        /// </summary>
         public Action<int, bool> onClickItemCallback;
 
+        /// <summary>
+        /// 展开回调
+        /// </summary>
         public Action<int, bool, bool> onExpandedStateChanged;
 
+        /// <summary>
+        /// 保存当前当前展开值
+        /// </summary>
         private HashSet<int> m_ExpandedSet = new HashSet<int>();
 
+        /// <summary>
+        /// 树的根节点
+        /// </summary>
         private TreeViewItem m_Root;
 
         public ComponentTreeView(TreeViewState state, GameObjectCompareInfo info, bool isLeft) : base(state)
@@ -72,19 +115,19 @@ namespace UnityCompare
 
             if (info.missType == MissType.allExist && !info.AllEqual())
             {
-                GUI.DrawTexture(iconRect, TEST_FAILED_ICON, ScaleMode.ScaleToFit);
+                GUI.DrawTexture(iconRect, styles.failImg, ScaleMode.ScaleToFit);
             }
             else if(info.missType == MissType.missRight && m_IsLeft)
             {
-                GUI.DrawTexture(iconRect, TEST_INCONCLUSIVE_ICON, ScaleMode.ScaleToFit);
+                GUI.DrawTexture(iconRect, styles.inconclusiveImg, ScaleMode.ScaleToFit);
             }
             else if (info.missType == MissType.missLeft && !m_IsLeft)
             {
-                GUI.DrawTexture(iconRect, TEST_INCONCLUSIVE_ICON, ScaleMode.ScaleToFit);
+                GUI.DrawTexture(iconRect, styles.inconclusiveImg, ScaleMode.ScaleToFit);
             }
             else if(!string.IsNullOrWhiteSpace(item.displayName))
             {
-                GUI.DrawTexture(iconRect, TEST_PASS_ICON, ScaleMode.ScaleToFit);
+                GUI.DrawTexture(iconRect, styles.successImg, ScaleMode.ScaleToFit);
             }
 
             rect.x += iconSize;

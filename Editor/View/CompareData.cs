@@ -3,6 +3,21 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 
+/// author:罐子（Lawliet）
+/// vindicator:对比数据
+/// versions:0.0.1
+/// introduce:对比的全局数据
+/// note:
+/// 由于是单例，因此需要ISerializationCallbackReceiver进行序列化
+/// 
+/// 
+/// list:
+/// 
+/// 
+/// 
+/// </summary>
 namespace UnityCompare
 {
     [Serializable]
@@ -38,6 +53,9 @@ namespace UnityCompare
             [SerializeField]
             public List<int> gameObjectIndexs;
 
+            /// <summary>
+            /// 展示的对象索引
+            /// </summary>
             [SerializeField]
             public int showTargetIndex = -1;
 
@@ -87,6 +105,11 @@ namespace UnityCompare
                 }
             }
 
+            /// <summary>
+            /// 反序列化
+            /// </summary>
+            /// <param name="root"></param>
+            /// <param name="showTarget"></param>
             public void Deserialize(out GameObjectCompareInfo root, out GameObjectCompareInfo showTarget)
             {
                 root = null;
@@ -142,10 +165,16 @@ namespace UnityCompare
             }
         }
 
+        /// <summary>
+        /// 单例
+        /// </summary>
         private static CompareData m_Instance;
 
         #region Field
 
+        /// <summary>
+        /// 是否显示相等项
+        /// </summary>
         [SerializeField]
         private bool m_ShowEqual;
 
@@ -155,6 +184,9 @@ namespace UnityCompare
             set { m_Instance.m_ShowEqual = value; }
         }
 
+        /// <summary>
+        /// 是否显示丢失的对象
+        /// </summary>
         [SerializeField]
         private bool m_ShowMiss;
 
@@ -164,6 +196,9 @@ namespace UnityCompare
             set { m_Instance.m_ShowMiss = value; }
         }
 
+        /// <summary>
+        /// GameObject视图的滚动进度
+        /// </summary>
         [SerializeField]
         private Vector2 m_GameObjectTreeScroll = new Vector2();
 
@@ -173,6 +208,9 @@ namespace UnityCompare
             set { m_Instance.m_GameObjectTreeScroll = value; }
         }
 
+        /// <summary>
+        /// 根节点对比信息
+        /// </summary>
         [NonSerialized]
         private GameObjectCompareInfo m_RootInfo;
 
@@ -182,6 +220,9 @@ namespace UnityCompare
             set { m_Instance.m_RootInfo = value; }
         }
 
+        /// <summary>
+        /// 显示Component对象的GameObject对比信息
+        /// </summary>
         [NonSerialized]
         private GameObjectCompareInfo m_ShowComponentTarget;
 
@@ -195,6 +236,9 @@ namespace UnityCompare
 
         #region callback
 
+        /// <summary>
+        /// 显示状态更改
+        /// </summary>
         private Action m_OnShowStateChange;
 
         public static Action onShowStateChange
@@ -207,6 +251,9 @@ namespace UnityCompare
 
         #region Serialize
 
+        /// <summary>
+        /// 序列化对象
+        /// </summary>
         [SerializeField]
         private SerializeData m_SerializeData;
 
@@ -222,6 +269,9 @@ namespace UnityCompare
             return m_Instance;
         }
 
+        /// <summary>
+        /// 序列化前
+        /// </summary>
         public void OnBeforeSerialize()
         {
             if (m_RootInfo != null)
@@ -232,6 +282,9 @@ namespace UnityCompare
             }
         }
 
+        /// <summary>
+        /// 序列化后
+        /// </summary>
         public void OnAfterDeserialize()
         {
             m_Instance = this;

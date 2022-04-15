@@ -35,6 +35,7 @@ namespace UnityCompare
                 return m_Styles;
             }
         }
+
         [NonSerialized]
         private bool m_Initialized;
 

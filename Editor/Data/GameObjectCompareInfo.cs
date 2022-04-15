@@ -2,11 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 
+/// author:罐子（Lawliet）
+/// vindicator:GameObject的对比信息
+/// versions:0.0.1
+/// introduce:保存GameObject的对比信息数据
+/// note:
+/// 
+/// 
+/// list:
+/// 
+/// 
+/// 
+/// </summary>
 namespace UnityCompare
 {
     [Serializable]
     public class GameObjectCompareInfo : CompareInfo
     {
+        /// <summary>
+        /// GameObject的对比状态
+        /// </summary>
         [SerializeField]
         private GameObjectCompareType m_GameObjectCompareType;
 
@@ -16,7 +33,9 @@ namespace UnityCompare
             set { m_GameObjectCompareType = value; }
         }
 
-
+        /// <summary>
+        /// 子对象的对比信息数组
+        /// </summary>
         [NonSerialized]
         private List<GameObjectCompareInfo> m_Children = new List<GameObjectCompareInfo>();
 
@@ -26,6 +45,9 @@ namespace UnityCompare
             set { m_Children = value; }
         }
 
+        /// <summary>
+        /// 当前对象的Component数组
+        /// </summary>
         [NonSerialized]
         private List<ComponentCompareInfo> m_Components = new List<ComponentCompareInfo>();
 
@@ -35,6 +57,9 @@ namespace UnityCompare
             set { m_Components = value; }
         }
 
+        /// <summary>
+        /// 左边的GameObject对象
+        /// </summary>
         [SerializeField]
         private GameObject m_LeftGameObject;
 
@@ -44,6 +69,9 @@ namespace UnityCompare
             set { m_LeftGameObject = value; }
         }
 
+        /// <summary>
+        /// 右边的GameObject对象
+        /// </summary>
         [SerializeField]
         private GameObject m_RightGameObject;
 
@@ -53,11 +81,19 @@ namespace UnityCompare
             set { m_RightGameObject = value; }
         }
 
+        /// <summary>
+        /// 是否全部相等
+        /// </summary>
+        /// <returns></returns>
         public override bool AllEqual()
         {
             return m_GameObjectCompareType == GameObjectCompareType.allEqual;
         }
 
+        /// <summary>
+        /// 返回不相等的提示消息
+        /// </summary>
+        /// <returns></returns>
         public override string GetUnequalMessage()
         {
             BUILDER_BUFFER.Clear();

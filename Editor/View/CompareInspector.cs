@@ -3,6 +3,20 @@ using System.Text;
 using UnityEditor;
 using UnityEngine;
 
+/// <summary>
+/// 
+/// author:罐子（Lawliet）
+/// vindicator:对比的Inspector界面
+/// versions:0.0.1
+/// introduce:
+/// note:
+/// 
+/// 
+/// list:
+/// 
+/// 
+/// 
+/// </summary>
 namespace UnityCompare
 {
     public class CompareInspector : EditorWindow
@@ -19,24 +33,47 @@ namespace UnityCompare
             return window;
         }
 
+        /// <summary>
+        /// 左边对象
+        /// </summary>
         [SerializeField]
         private UnityEngine.Object m_Left;
 
+        /// <summary>
+        /// 右边对象
+        /// </summary>
         [SerializeField]
         private UnityEngine.Object m_Right;
 
+        /// <summary>
+        /// 左边对象的Editor
+        /// </summary>
         [SerializeField]
         private Editor m_LeftEditor;
 
+        /// <summary>
+        /// 右边对象的Editor
+        /// </summary>
         [SerializeField]
         private Editor m_RightEditor;
 
+        /// <summary>
+        /// 滚动进度
+        /// </summary>
         [SerializeField]
         private Vector2 m_ScrollPosition;
 
+        /// <summary>
+        /// 不相等的信息
+        /// </summary>
         [SerializeField]
         private string m_UnequalMessage;
 
+        /// <summary>
+        /// 设置对比的对象
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
         private void SetObject(UnityEngine.Object left, UnityEngine.Object right)
         {
             if(m_Left != left)
@@ -69,6 +106,10 @@ namespace UnityCompare
             }
         }
 
+        /// <summary>
+        /// 设置对比信息
+        /// </summary>
+        /// <param name="info"></param>
         private void SetInfo(CompareInfo info)
         {
             string unequalMessage = info.GetUnequalMessage();
@@ -103,9 +144,20 @@ namespace UnityCompare
 
             GUILayout.EndHorizontal();
 
+            /*if (GUILayout.Button("Print"))
+            {
+                Debug.Log(PrefabUtility.IsAnyPrefabInstanceRoot(m_Left as GameObject));
+                //CompareUtility.PrintProperty(m_LeftEditor.serializedObject, m_RightEditor.serializedObject);
+            }*/
+
             OnUnequalMessage();
         }
 
+        /// <summary>
+        /// Editor的绘制
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="editor"></param>
         private void OnEditor(UnityEngine.Object obj, Editor editor)
         {
             EditorGUIUtility.wideMode = true;
@@ -140,6 +192,9 @@ namespace UnityCompare
             EditorGUIUtility.wideMode = false;
         }
 
+        /// <summary>
+        /// 不相等提示信息的绘制
+        /// </summary>
         private void OnUnequalMessage()
         {
             if (!string.IsNullOrWhiteSpace(m_UnequalMessage))
