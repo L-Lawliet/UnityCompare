@@ -21,6 +21,15 @@ namespace UnityCompare
             return window;
         }
 
+        public static void ComparePrefab(GameObject left, GameObject right)
+        {
+            var window = GetWindow<CompareWindow>();
+            window.titleContent = new GUIContent("Compare");
+            window.Focus();
+            window.Repaint();
+            window.Compare(left, right);
+        }
+
         private CompareStyles m_Styles;
 
         public CompareStyles styles
@@ -258,6 +267,19 @@ namespace UnityCompare
                 m_LeftView.Reload();
                 m_RightView.Reload();
             }
+        }
+
+        private void Compare(GameObject left, GameObject right)
+        {
+            InitIfNeeded();
+
+            m_LeftView.gameObject = left;
+            m_RightView.gameObject = right;
+
+            CompareData.rootInfo = CompareUtility.ComparePrefab(m_LeftView.gameObject, m_RightView.gameObject);
+
+            m_LeftView.Reload();
+            m_RightView.Reload();
         }
     }
 }

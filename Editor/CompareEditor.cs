@@ -24,40 +24,16 @@ namespace UnityCompare
         {
             var gameObjects = Selection.gameObjects;
 
-            if (gameObjects.Length >= 2)
+            if (gameObjects.Length != 2)
+            {
+                EditorUtility.DisplayDialog("Error", "需要选中两个Prefab进行对比", "ok");
+            }
+            else
             {
                 var left = gameObjects[0];
                 var right = gameObjects[1];
 
-                var info = CompareUtility.ComparePrefab(left, right);
-
-                ShowGameObjectInfo(info);
-            }
-        }
-
-        private static void ShowGameObjectInfo(GameObjectCompareInfo info)
-        {
-            if (!info.AllEqual())
-            {
-                Debug.LogErrorFormat("go {0} no equal, missType:{1}   type:{2}", info.name, info.missType, info.gameObjectCompareType);
-
-                for (int i = 0; i < info.children.Count; i++)
-                {
-                    ShowGameObjectInfo(info.children[i]);
-                }
-
-                for (int i = 0; i < info.components.Count; i++)
-                {
-                    ShowComponentInfo(info.components[i]);
-                }
-            }
-        }
-
-        private static void ShowComponentInfo(ComponentCompareInfo info)
-        {
-            if (!info.AllEqual())
-            {
-                Debug.LogErrorFormat("component {0} no equal, missType:{1}   type:{2}", info.name, info.missType, info.componentCompareType);
+                CompareWindow.ComparePrefab(left, right);
             }
         }
     }
