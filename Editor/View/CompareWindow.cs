@@ -106,7 +106,6 @@ namespace UnityCompare
             view.gameObjectChangeCallback += GameObjectChangeCallback;
             view.onDoubleClickItem += OnDoubleClickItem;
             view.onGOTreeExpandedStateChanged += OnExpandedStateChanged;
-            view.onShowGameObjectView += OnShowGameObjectView;
         }
 
         private void DestroyView(CompareView view)
@@ -116,7 +115,6 @@ namespace UnityCompare
                 view.gameObjectChangeCallback -= GameObjectChangeCallback;
                 view.onDoubleClickItem -= OnDoubleClickItem;
                 view.onGOTreeExpandedStateChanged -= OnExpandedStateChanged;
-                view.onShowGameObjectView -= OnShowGameObjectView;
 
                 view.Destory();
             }
@@ -125,8 +123,10 @@ namespace UnityCompare
 
         private void OnDoubleClickItem(GameObjectCompareInfo info)
         {
-            m_LeftView.ChangeTree(true, info);
-            m_RightView.ChangeTree(true, info);
+            CompareData.showComponentView = true;
+
+            m_LeftView.ChangeTree(info);
+            m_RightView.ChangeTree(info);
         }
 
         private void OnExpandedStateChanged(int id, bool isLeft, bool expanded)
@@ -139,12 +139,6 @@ namespace UnityCompare
             {
                 m_LeftView.SetExpanded(id, expanded);
             }
-        }
-
-        private void OnShowGameObjectView()
-        {
-            m_LeftView.ChangeTree(false);
-            m_RightView.ChangeTree(false);
         }
 
         private void GameObjectChangeCallback()
@@ -183,20 +177,54 @@ namespace UnityCompare
             {
                 Compare();
 
-                m_LeftView.ChangeTree(false);
-                m_RightView.ChangeTree(false);
+                CompareData.showComponentView = false;
             }
 
             GUILayout.FlexibleSpace();
 
             if (GUILayout.Button("Prev", styles.styleToolButton, GUILayout.Width(40.0f)))
             {
-                 
+                if(!CompareData.showComponentView)
+                {
+                    int prev = CompareUtility.SearchGameObjectInfo(CompareData.selectedGameObjectID, true, CompareData.showMiss);
+
+                    if (prev != -1)
+                    {
+                        CompareData.selectedGameObjectID = prev;
+                    }
+                }
+                else
+                {
+                    int prev = CompareUtility.SearchComponent(CompareData.selectedComponentID, true, CompareData.showMiss);
+
+                    if (prev != -1)
+                    {
+                        CompareData.selectedComponentID = prev;
+                    }
+                }
+                
             }
 
             if (GUILayout.Button("Next", styles.styleToolButton, GUILayout.Width(40.0f)))
             {
+                if (!CompareData.showComponentView)
+                {
+                    int next = CompareUtility.SearchGameObjectInfo(CompareData.selectedGameObjectID, false, CompareData.showMiss);
 
+                    if (next != -1)
+                    {
+                        CompareData.selectedGameObjectID = next;
+                    }
+                }
+                else
+                {
+                    int next = CompareUtility.SearchComponent(CompareData.selectedComponentID, false, CompareData.showMiss);
+
+                    if (next != -1)
+                    {
+                        CompareData.selectedComponentID = next;
+                    }
+                }
             }
 
             GUILayout.Space(10);

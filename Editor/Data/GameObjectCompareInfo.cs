@@ -133,5 +133,34 @@ namespace UnityCompare
         {
 
         }
+
+        /// <summary>
+        /// 返回下一个
+        /// TODO：由于采用树的结构，因此遍历起来并不好，后续考虑修改结构
+        /// </summary>
+        /// <returns></returns>
+        public GameObjectCompareInfo Next()
+        {
+            return Next(0);
+        }
+
+        private GameObjectCompareInfo Next(int childIndex)
+        {
+            if (children != null && children.Count > childIndex)
+            {
+                return children[childIndex];
+            }
+
+            if (parent != null)
+            {
+                GameObjectCompareInfo parentInfo = (parent as GameObjectCompareInfo);
+
+                int index = parentInfo.children.IndexOf(this);
+
+                return parentInfo.Next(index + 1);
+            }
+
+            return null;
+        }
     }
 }

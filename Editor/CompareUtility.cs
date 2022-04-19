@@ -603,6 +603,168 @@ namespace UnityCompare
         }
 
         /// <summary>
+        /// 搜索不相等的对象
+        /// TODO：由于GameObjectInfo为树结构，因此实现的较为奇怪，后续考虑改结构
+        /// </summary>
+        /// <param name="currentID"></param>
+        /// <param name="isPrev"></param>
+        /// <param name="searchMiss"></param>
+        /// <returns></returns>
+        public static int SearchGameObjectInfo(int currentID, bool isPrev = false, bool searchMiss = true)
+        {
+            if(CompareData.rootInfo == null)
+            {
+                return -1;
+            }
+
+            GameObjectCompareInfo currentInfo = CompareData.rootInfo;
+
+            bool isPass = false; //已经遍历过当前ID
+
+            int lastResultID = -1; //上一个结果ID
+
+            var n = 100;
+
+            while(currentInfo != null && n > 0)
+            {
+                n--;
+                if(currentInfo.id == currentID)
+                {
+                    if (isPrev) //命中开始搜索的ID，返回它的上一个
+                    {
+                        return lastResultID;
+                    }
+
+                    isPass = true;
+
+                    currentInfo = currentInfo.Next();
+
+                    continue;
+                }
+
+                bool hit = false;
+
+                if (currentInfo.missType != MissType.allExist)
+                {
+                    if (searchMiss)
+                    {
+                        hit = true;
+                    }
+                }
+                else
+                {
+                    hit = !currentInfo.AllEqual();
+                }
+
+                if (hit)
+                {
+                    lastResultID = currentInfo.id;
+
+                    if(!isPrev)
+                    {
+                        if(currentID == -1)
+                        {
+                            //搜索的ID为-1，返回命中第一个
+                            return lastResultID;
+                        }
+
+                        if (isPass)
+                        {
+                            //命中开始搜索的ID的下一个
+                            return lastResultID;
+                        }
+                    }
+                }
+
+                currentInfo = currentInfo.Next(); 
+            }
+
+            if (isPrev && currentID == -1 && lastResultID != -1)
+            {
+                //当搜索ID为-1，并且向前搜索，返回最后一个
+                return lastResultID;
+            }
+
+            return -1;
+        }
+
+        public static int SearchComponent(int currentID, bool isPrev = false, bool searchMiss = true)
+        {
+            if (CompareData.showComponentTarget == null)
+            {
+                return -1;
+            }
+
+            GameObjectCompareInfo target = CompareData.showComponentTarget;
+
+            if (target.components == null)
+            {
+                return -1;
+            }
+
+            bool isPass = false; //已经遍历过当前ID
+
+            int startResultID = -1; //
+
+            int lastResultID = -1; //上一个结果ID
+
+            for (int i = 0; i < target.components.Count; i++)
+            {
+                int index = i;
+
+                if (isPrev)
+                {
+                    index = target.components.Count - index - 1;
+                }
+
+                var component = target.components[index];
+
+                if (component.id == currentID)
+                {
+                    isPass = true;
+                }
+
+                bool hit = false;
+
+                if (component.missType != MissType.allExist)
+                {
+                    if (searchMiss)
+                    {
+                        hit = true;
+                    }
+                }
+                else
+                {
+                    hit = !component.AllEqual();
+                }
+
+                if (hit)
+                {
+                    lastResultID = component.id;
+
+                    if (startResultID == -1)
+                    {
+                        startResultID = lastResultID;
+                    }
+
+                    if (currentID == -1)
+                    {
+                        //搜索的ID为-1，返回命中第一个
+                        return lastResultID;
+                    }
+
+                    if (isPass)
+                    {
+                        //命中开始搜索的ID的下一个
+                        return lastResultID;
+                    }
+                }
+            }
+
+            return startResultID; //有可能currentID不在当前的GameObject内
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="left"></param>

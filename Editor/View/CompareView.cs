@@ -73,12 +73,6 @@ namespace UnityCompare
         private ComponentTreeView m_ComponentTree;
 
         /// <summary>
-        /// 显示GameObject视图还是Component视图
-        /// </summary>
-        [SerializeField]
-        private bool m_ShowComponentView;
-
-        /// <summary>
         /// 左边还是右边的视图
         /// </summary>
         [SerializeField]
@@ -106,11 +100,6 @@ namespace UnityCompare
             get{ return m_GOTree.onDoubleClickItem; }
             set{ m_GOTree.onDoubleClickItem = value; }
         }
-
-        /// <summary>
-        /// 显示GameObject视图的回调
-        /// </summary>
-        public Action onShowGameObjectView;
 
         public CompareView(bool isLeft)
         {
@@ -154,7 +143,7 @@ namespace UnityCompare
 
         private void OnToolBar()
         {
-            if (m_ShowComponentView)
+            if (CompareData.showComponentView)
             {
                 if (CompareData.showComponentTarget != null)
                 {
@@ -167,10 +156,7 @@ namespace UnityCompare
 
                 if (GUILayout.Button(styles.prevContent, EditorStyles.boldLabel))
                 {
-                    if(onShowGameObjectView != null)
-                    {
-                        onShowGameObjectView.Invoke();
-                    }
+                    CompareData.showComponentView = false;
                 }
             }
             else
@@ -192,7 +178,7 @@ namespace UnityCompare
 
         private void OnTreeView()
         {
-            if (m_ShowComponentView)
+            if (CompareData.showComponentView)
             {
                 Rect rect = GUILayoutUtility.GetRect(0, 100000, 0, 100000);
                 m_ComponentTree.OnGUI(rect);
@@ -229,11 +215,9 @@ namespace UnityCompare
         /// </summary>
         /// <param name="showComponent"></param>
         /// <param name="info"></param>
-        public void ChangeTree(bool showComponent, GameObjectCompareInfo info = null)
+        public void ChangeTree(GameObjectCompareInfo info = null)
         {
-            m_ShowComponentView = showComponent;
-
-            if (m_ShowComponentView)
+            if (CompareData.showComponentView)
             {
                 CompareData.showComponentTarget = info;
                 m_ComponentTree.Reload(CompareData.showComponentTarget);

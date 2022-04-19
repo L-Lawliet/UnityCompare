@@ -233,6 +233,18 @@ namespace UnityCompare
         }
 
         /// <summary>
+        /// 展示GameObjectView还是ComponentView
+        /// </summary>
+        [SerializeField]
+        private bool m_ShowComponentView = false;
+
+        public static bool showComponentView
+        {
+            get { return m_Instance.m_ShowComponentView; }
+            set { m_Instance.m_ShowComponentView = value; }
+        }
+
+        /// <summary>
         /// 根节点对比信息
         /// </summary>
         [NonSerialized]
