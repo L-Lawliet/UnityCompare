@@ -209,6 +209,30 @@ namespace UnityCompare
         }
 
         /// <summary>
+        /// 选中的GameObjectID
+        /// </summary>
+        [SerializeField]
+        private int m_SelectedGameObjectID = -1;
+
+        public static int selectedGameObjectID
+        {
+            get { return m_Instance.m_SelectedGameObjectID; }
+            set { m_Instance.m_SelectedGameObjectID = value; }
+        }
+
+        /// <summary>
+        /// 选中的GameObjectID
+        /// </summary>
+        [SerializeField]
+        private int m_SelectedComponentID = -1;
+
+        public static int selectedComponentID
+        {
+            get { return m_Instance.m_SelectedComponentID; }
+            set { m_Instance.m_SelectedComponentID = value; }
+        }
+
+        /// <summary>
         /// 根节点对比信息
         /// </summary>
         [NonSerialized]

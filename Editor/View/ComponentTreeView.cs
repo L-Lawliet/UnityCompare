@@ -41,6 +41,11 @@ namespace UnityCompare
         }
 
         /// <summary>
+        /// 选中的ID列表
+        /// </summary>
+        private static readonly List<int> m_SelectIDs = new List<int>();
+
+        /// <summary>
         /// GameObject信息
         /// </summary>
         private GameObjectCompareInfo m_Info;
@@ -101,6 +106,35 @@ namespace UnityCompare
             Reload();
         }
 
+        public override void OnGUI(Rect rect)
+        {
+            if(CompareData.selectedComponentID != -1)
+            {
+                var ids = this.GetSelection();
+
+                var change = false;
+
+                if (ids.Count == 0)
+                {
+                    change = true;
+                }
+                else if (ids[0] != CompareData.selectedComponentID)
+                {
+                    change = true;
+                }
+
+                if (change)
+                {
+                    m_SelectIDs.Clear();
+                    m_SelectIDs.Add(CompareData.selectedComponentID);
+                    this.SetSelection(m_SelectIDs);
+                    m_SelectIDs.Clear();
+                }
+            }
+
+            base.OnGUI(rect);
+        }
+
         protected override void RowGUI(RowGUIArgs args)
         {
             var item = args.item as CompareTreeViewItem<ComponentCompareInfo>;
@@ -141,10 +175,7 @@ namespace UnityCompare
         {
             base.SingleClickedItem(id);
 
-            if(onClickItemCallback != null)
-            {
-                onClickItemCallback.Invoke(id, m_IsLeft);
-            }
+            CompareData.selectedComponentID = id;
 
             var item = FindItem(id, m_Root) as CompareTreeViewItem<ComponentCompareInfo>;
 

@@ -104,11 +104,9 @@ namespace UnityCompare
         {
             view.Init();
             view.gameObjectChangeCallback += GameObjectChangeCallback;
-            view.onGOTreeClickItemCallback += OnClickItemCallback;
             view.onDoubleClickItem += OnDoubleClickItem;
             view.onGOTreeExpandedStateChanged += OnExpandedStateChanged;
             view.onShowGameObjectView += OnShowGameObjectView;
-            view.onComponentTreeClickItemCallback += OnComponentClickItemCallback;
         }
 
         private void DestroyView(CompareView view)
@@ -116,27 +114,13 @@ namespace UnityCompare
             if(view != null)
             {
                 view.gameObjectChangeCallback -= GameObjectChangeCallback;
-                view.onGOTreeClickItemCallback -= OnClickItemCallback;
                 view.onDoubleClickItem -= OnDoubleClickItem;
                 view.onGOTreeExpandedStateChanged -= OnExpandedStateChanged;
                 view.onShowGameObjectView -= OnShowGameObjectView;
-                view.onComponentTreeClickItemCallback -= OnComponentClickItemCallback;
 
                 view.Destory();
             }
             
-        }
-
-        private void OnClickItemCallback(int id, bool isLeft)
-        {
-            if (isLeft)
-            {
-                m_RightView.Select(id, false);
-            }
-            else
-            {
-                m_LeftView.Select(id, false);
-            }
         }
 
         private void OnDoubleClickItem(GameObjectCompareInfo info)
@@ -166,18 +150,6 @@ namespace UnityCompare
         private void GameObjectChangeCallback()
         {
             m_GameObjectChangeDirty = true;
-        }
-
-        private void OnComponentClickItemCallback(int id, bool isLeft)
-        {
-            if (isLeft)
-            {
-                m_RightView.Select(id, true);
-            }
-            else
-            {
-                m_LeftView.Select(id, true);
-            }
         }
 
         private void OnGUI()
@@ -216,6 +188,18 @@ namespace UnityCompare
             }
 
             GUILayout.FlexibleSpace();
+
+            if (GUILayout.Button("Prev", styles.styleToolButton, GUILayout.Width(40.0f)))
+            {
+                 
+            }
+
+            if (GUILayout.Button("Next", styles.styleToolButton, GUILayout.Width(40.0f)))
+            {
+
+            }
+
+            GUILayout.Space(10);
 
             using (var check = new EditorGUI.ChangeCheckScope())
             {

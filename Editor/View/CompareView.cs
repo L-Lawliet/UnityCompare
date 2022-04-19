@@ -23,11 +23,6 @@ namespace UnityCompare
     [Serializable]
     public class CompareView
     {
-        /// <summary>
-        /// 选中的ID列表
-        /// </summary>
-        private static readonly List<int> m_SelectIDs = new List<int>();
-
         private CompareStyles m_Styles;
 
         public CompareStyles styles
@@ -95,15 +90,6 @@ namespace UnityCompare
         public Action gameObjectChangeCallback;
 
         /// <summary>
-        /// 在GameObject树结构选中GameObject的回调
-        /// </summary>
-        public Action<int, bool> onGOTreeClickItemCallback
-        {
-            get { return m_GOTree.onClickItemCallback; }
-            set { m_GOTree.onClickItemCallback = value; }
-        }
-
-        /// <summary>
         /// GameObject树结构展开状态变更回调
         /// </summary>
         public Action<int, bool, bool> onGOTreeExpandedStateChanged
@@ -119,15 +105,6 @@ namespace UnityCompare
         {
             get{ return m_GOTree.onDoubleClickItem; }
             set{ m_GOTree.onDoubleClickItem = value; }
-        }
-
-        /// <summary>
-        /// 在Component树结构选中Component的回调
-        /// </summary>
-        public Action<int, bool> onComponentTreeClickItemCallback
-        {
-            get { return m_ComponentTree.onClickItemCallback; }
-            set { m_ComponentTree.onClickItemCallback = value; }
         }
 
         /// <summary>
@@ -245,28 +222,6 @@ namespace UnityCompare
         public void SetExpanded(int id, bool expanded)
         {
             m_GOTree.SetExpanded(id, expanded);
-        }
-
-        /// <summary>
-        /// 选中对应ID
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="isComponentView"></param>
-        public void Select(int id, bool isComponentView)
-        {
-            m_SelectIDs.Clear();
-            m_SelectIDs.Add(id);
-
-            if (isComponentView)
-            {
-                m_ComponentTree.SetSelection(m_SelectIDs, TreeViewSelectionOptions.FireSelectionChanged);
-            }
-            else
-            {
-                m_GOTree.SetSelection(m_SelectIDs, TreeViewSelectionOptions.FireSelectionChanged);
-            }
-
-            m_SelectIDs.Clear();
         }
 
         /// <summary>
