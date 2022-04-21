@@ -78,6 +78,8 @@ namespace UnityCompare
                 InitView(m_LeftView);
                 InitView(m_RightView);
 
+                CompareData.CompareCall += Compare;
+
                 //m_SearchField = new SearchField();
 
                 //m_SearchField.downOrUpArrowKeyPressed += m_GameObjectTree.SetFocusAndEnsureSelectedItem;
@@ -98,6 +100,26 @@ namespace UnityCompare
         {
             DestroyView(m_LeftView);
             DestroyView(m_RightView);
+
+            CompareData.CompareCall -= Compare;
+        }
+
+        private void OnDestroy()
+        {
+
+            if (CompareData.leftPrefabContent != null)
+            {
+                PrefabUtility.UnloadPrefabContents(CompareData.leftPrefabContent);
+                CompareData.leftPrefabContent = null;
+                CompareData.leftPrefabPath = "";
+            }
+
+            if (CompareData.rightPrefabContent != null)
+            {
+                PrefabUtility.UnloadPrefabContents(CompareData.rightPrefabContent);
+                CompareData.rightPrefabContent = null;
+                CompareData.rightPrefabPath = "";
+            }
         }
 
         private void InitView(CompareView view)
@@ -267,10 +289,7 @@ namespace UnityCompare
         {
             if (m_LeftView.gameObject != null && m_RightView.gameObject != null)
             {
-                CompareData.rootInfo = CompareUtility.ComparePrefab(m_LeftView.gameObject, m_RightView.gameObject);
-
-                m_LeftView.Reload();
-                m_RightView.Reload();
+                CompareImplement();
             }
             else
             {
@@ -288,7 +307,32 @@ namespace UnityCompare
             m_LeftView.gameObject = left;
             m_RightView.gameObject = right;
 
-            CompareData.rootInfo = CompareUtility.ComparePrefab(m_LeftView.gameObject, m_RightView.gameObject);
+            CompareImplement();
+        }
+
+        private void CompareImplement()
+        {
+            if (CompareData.leftPrefabContent != null)
+            {
+                PrefabUtility.UnloadPrefabContents(CompareData.leftPrefabContent);
+                CompareData.leftPrefabContent = null;
+                CompareData.leftPrefabPath = "";
+            }
+
+            if (CompareData.rightPrefabContent != null)
+            {
+                PrefabUtility.UnloadPrefabContents(CompareData.rightPrefabContent);
+                CompareData.rightPrefabContent = null;
+                CompareData.rightPrefabPath = "";
+            }
+
+            CompareData.leftPrefabPath = AssetDatabase.GetAssetPath(m_LeftView.gameObject);
+            CompareData.rightPrefabPath = AssetDatabase.GetAssetPath(m_RightView.gameObject);
+
+            CompareData.leftPrefabContent = PrefabUtility.LoadPrefabContents(CompareData.leftPrefabPath);
+            CompareData.rightPrefabContent = PrefabUtility.LoadPrefabContents(CompareData.rightPrefabPath);
+
+            CompareData.rootInfo = CompareUtility.ComparePrefab(CompareData.leftPrefabContent, CompareData.rightPrefabContent);
 
             m_LeftView.Reload();
             m_RightView.Reload();

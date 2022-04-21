@@ -69,6 +69,11 @@ namespace UnityCompare
         public static readonly List<Component> m_RightComponentList = new List<Component>();
 
         /// <summary>
+        /// Transform数组（重复利用）
+        /// </summary>
+        public static readonly List<Transform> m_TransformList = new List<Transform>();
+
+        /// <summary>
         /// 对比两个Prefab
         /// </summary>
         /// <param name="left"></param>
@@ -563,16 +568,14 @@ namespace UnityCompare
             AssetDatabase.TryGetGUIDAndLocalFileIdentifier(left.objectReferenceValue, out string leftGUID, out long leftID);
             AssetDatabase.TryGetGUIDAndLocalFileIdentifier(right.objectReferenceValue, out string rightGUID, out long rightID);
 
-            if (leftGUID == rightGUID)
+            if (leftGUID != "00000000000000000000000000000000")
             {
-                return true;
+                if (leftGUID == rightGUID && leftID == rightID)
+                {
+                    return true;
+                }
             }
-
-            if (leftGUID == "" && rightGUID == "")
-            {
-                return true;
-            }
-
+            
             var leftType = left.objectReferenceValue.GetType();
             var rightType = right.objectReferenceValue.GetType();
 
@@ -762,6 +765,106 @@ namespace UnityCompare
             }
 
             return startResultID; //有可能currentID不在当前的GameObject内
+        }
+
+        /// <summary>
+        /// 删除GameObject
+        /// </summary>
+        /// <param name="left">需要删除的位置（对比组的左边或者右边）</param>
+        /// <param name="info">删除项</param>
+        public static void RemoveGameObject(bool left, GameObjectCompareInfo info)
+        {
+            string path = "";
+            GameObject root = null;
+            GameObject removeTarget;
+
+            if (left)
+            {
+                path = CompareData.leftPrefabPath;
+                root = CompareData.leftPrefabContent;
+                removeTarget = info.leftGameObject;
+            }
+            else
+            {
+                path = CompareData.rightPrefabPath;
+                root = CompareData.rightPrefabContent;
+                removeTarget = info.rightGameObject;
+            }
+
+            GameObject.DestroyImmediate(removeTarget);
+
+            PrefabUtility.SaveAsPrefabAsset(root, path);
+        }
+
+        /// <summary>
+        /// 添加GameObject
+        /// 把左边（右边）拷贝添加到右边（左边）
+        /// </summary>
+        /// <param name="leftToRight"></param>
+        /// <param name="info"></param>
+        public static void AddGameObject(bool leftToRight, GameObjectCompareInfo info)
+        {
+            GameObjectCompareInfo parent = (info.parent as GameObjectCompareInfo);
+
+            if (parent == null)
+            {
+                return;
+            }
+
+            string path = "";
+            GameObject root = null;
+            GameObject target;
+            GameObject parentTarget;
+            int lastSiblingIndex = -1;
+            GameObjectCompareInfo last = null;
+
+            var index = parent.children.IndexOf(info);
+
+            if(index > 0)
+            {
+                last = parent.children[index - 1];
+            }
+
+            if (leftToRight)
+            {
+                path = CompareData.rightPrefabPath;
+                root = CompareData.rightPrefabContent;
+                target = info.leftGameObject;
+                parentTarget = parent.rightGameObject;
+
+                if(last != null && last.leftGameObject != null)
+                {
+                    lastSiblingIndex = last.leftGameObject.transform.GetSiblingIndex();
+                }
+            }
+            else
+            {
+                path = CompareData.leftPrefabPath;
+                root = CompareData.leftPrefabContent;
+                target = info.rightGameObject;
+                parentTarget = parent.leftGameObject;
+
+                if (last != null && last.rightGameObject != null)
+                {
+                    lastSiblingIndex = last.rightGameObject.transform.GetSiblingIndex();
+                }
+            }
+
+            if(target == null || parent == null)
+            {
+                return;
+            }
+
+            GameObject copy = GameObject.Instantiate(target, parentTarget.transform);
+
+            copy.name = target.name;
+
+            if (lastSiblingIndex != -1)
+            {
+                copy.transform.SetSiblingIndex(lastSiblingIndex + 1);
+            }
+
+            PrefabUtility.SaveAsPrefabAsset(root, path);
         }
 
         /// <summary>

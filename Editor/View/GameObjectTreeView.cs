@@ -200,6 +200,69 @@ namespace UnityCompare
             CompareInspector.GetWindow(item.info, item.info.leftGameObject, item.info.rightGameObject);
         }
 
+        protected override void ContextClickedItem(int id)
+        {
+            GenericMenu menu = new GenericMenu();
+
+            var item = FindItem(id, m_Root) as CompareTreeViewItem<GameObjectCompareInfo>;
+
+            var info = item.info;
+
+            if (info.missType != MissType.allExist)
+            {
+                if (info.missType == MissType.missLeft)
+                {
+                    if (m_IsLeft)
+                    {
+                        menu.AddItem(m_Styles.menuRemoveContent, false, MenuRemoveHandle, info);
+                    }
+                    else
+                    {
+                        menu.AddItem(m_Styles.menuCopyToTheLeftContent, false, MenuCopyHandle, info);
+                    }
+                }
+                else if (info.missType == MissType.missRight)
+                {
+                    if (m_IsLeft)
+                    {
+                        menu.AddItem(m_Styles.menuCopyToTheRightContent, false, MenuCopyHandle, info);
+                    }
+                    else
+                    {
+                        menu.AddItem(m_Styles.menuRemoveContent, false, MenuRemoveHandle, info);
+                    }
+                }
+            }
+           
+            menu.ShowAsContext();
+        }
+
+        private void MenuRemoveHandle(object target)
+        {
+            GameObjectCompareInfo info = target as GameObjectCompareInfo;
+
+            bool removeLeft = !m_IsLeft; //删除菜单在缺失的一边发起，因此需要删除的位置与发起位置刚好相反。
+
+            CompareUtility.RemoveGameObject(removeLeft, info);
+
+            if (CompareData.CompareCall != null)
+            {
+                CompareData.CompareCall.Invoke();
+            }
+        }
+
+        private void MenuCopyHandle(object target)
+        {
+            GameObjectCompareInfo info = target as GameObjectCompareInfo;
+
+            CompareUtility.AddGameObject(m_IsLeft, info);
+
+            if (CompareData.CompareCall != null)
+            {
+                CompareData.CompareCall.Invoke();
+            }
+        }
+
         protected override void DoubleClickedItem(int id)
         {
             base.DoubleClickedItem(id);

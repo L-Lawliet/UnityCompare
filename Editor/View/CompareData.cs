@@ -244,6 +244,42 @@ namespace UnityCompare
             set { m_Instance.m_ShowComponentView = value; }
         }
 
+        [SerializeField]
+        private GameObject m_LeftPrefabContent;
+
+        public static GameObject leftPrefabContent
+        {
+            get { return m_Instance.m_LeftPrefabContent; }
+            set { m_Instance.m_LeftPrefabContent = value; }
+        }
+
+        [SerializeField]
+        private GameObject m_RightPrefabContent;
+
+        public static GameObject rightPrefabContent
+        {
+            get { return m_Instance.m_RightPrefabContent; }
+            set { m_Instance.m_RightPrefabContent = value; }
+        }
+
+        [SerializeField]
+        private string m_LeftPrefabPath;
+
+        public static string leftPrefabPath
+        {
+            get { return m_Instance.m_LeftPrefabPath; }
+            set { m_Instance.m_LeftPrefabPath = value; }
+        }
+
+        [SerializeField]
+        private string m_RightPrefabPath;
+
+        public static string rightPrefabPath
+        {
+            get { return m_Instance.m_RightPrefabPath; }
+            set { m_Instance.m_RightPrefabPath = value; }
+        }
+
         /// <summary>
         /// 根节点对比信息
         /// </summary>
@@ -281,6 +317,17 @@ namespace UnityCompare
         {
             get { return m_Instance.m_OnShowStateChange; }
             set { m_Instance.m_OnShowStateChange = value;  }
+        }
+
+        /// <summary>
+        /// 重新对比
+        /// </summary>
+        private Action m_CompareCall;
+
+        public static Action CompareCall
+        {
+            get { return m_Instance.m_CompareCall; }
+            set { m_Instance.m_CompareCall = value; }
         }
 
         #endregion

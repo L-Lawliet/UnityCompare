@@ -39,5 +39,20 @@ namespace UnityCompare
         public readonly Texture2D inconclusiveImg = EditorGUIUtility.FindTexture("TestInconclusive");
 
         public readonly GUIContent prevContent = new GUIContent("back", EditorGUIUtility.FindTexture("back"));
+
+
+        #region 菜单
+
+        public readonly GUIContent menuRemoveContent = new GUIContent("Remove");
+
+        public readonly GUIContent menuCopyToTheLeftContent = new GUIContent("Copy to the Left");
+
+        public readonly GUIContent menuCopyToTheRightContent = new GUIContent("Copy to the Right");
+
+        public readonly GUIContent menuCopyValueToTheLeftContent = new GUIContent("Copy value to the Left");
+
+        public readonly GUIContent menuCopyValueToTheRightContent = new GUIContent("Copy value to the Right");
+
+        #endregion 
     }
 }
