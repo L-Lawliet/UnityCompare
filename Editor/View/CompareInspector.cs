@@ -33,6 +33,17 @@ namespace UnityCompare
             return window;
         }
 
+        public static void ClearWindow()
+        {
+            if(HasOpenInstances<CompareInspector>())
+            {
+                var window = GetWindow<CompareInspector>();
+                window.titleContent = new GUIContent("Compare Inspector");
+
+                window.Clear();
+            }
+        }
+
         /// <summary>
         /// 左边对象
         /// </summary>
@@ -48,13 +59,11 @@ namespace UnityCompare
         /// <summary>
         /// 左边对象的Editor
         /// </summary>
-        [SerializeField]
         private Editor m_LeftEditor;
 
         /// <summary>
         /// 右边对象的Editor
         /// </summary>
-        [SerializeField]
         private Editor m_RightEditor;
 
         /// <summary>
@@ -80,28 +89,31 @@ namespace UnityCompare
             {
                 m_Left = left;
 
+                if(m_LeftEditor != null)
+                {
+                    DestroyImmediate(m_LeftEditor);
+                    m_LeftEditor = null;
+                }
+
                 if(m_Left != null)
                 {
                     m_LeftEditor = Editor.CreateEditor(m_Left);
                 }
-                else
-                {
-                    m_LeftEditor = null;
-                }
-                
             }
 
             if (m_Right != right)
             {
                 m_Right = right;
 
-                if(m_Right != null)
+                if (m_RightEditor != null)
+                {
+                    DestroyImmediate(m_RightEditor);
+                    m_RightEditor = null;
+                }
+
+                if (m_Right != null)
                 {
                     m_RightEditor = Editor.CreateEditor(m_Right);
-                }
-                else
-                {
-                    m_RightEditor = null;
                 }
             }
         }
@@ -128,6 +140,54 @@ namespace UnityCompare
 
                 m_UnequalMessage = builder.ToString();
             }
+        }
+
+        private void OnEnable()
+        {
+            if(m_Left != null)
+            {
+                m_LeftEditor = Editor.CreateEditor(m_Left);
+            }
+
+            if (m_Right != null)
+            {
+                m_RightEditor = Editor.CreateEditor(m_Right);
+            }
+        }
+
+        private void OnDisable()
+        {
+            if (m_LeftEditor != null)
+            {
+                DestroyImmediate(m_LeftEditor);
+                m_LeftEditor = null;
+            }
+
+            if (m_RightEditor != null)
+            {
+                DestroyImmediate(m_RightEditor);
+                m_RightEditor = null;
+            }
+        }
+
+        private void Clear()
+        {
+            if(m_LeftEditor != null)
+            {
+                DestroyImmediate(m_LeftEditor);
+                m_LeftEditor = null;
+            }
+
+            if (m_RightEditor != null)
+            {
+                DestroyImmediate(m_RightEditor);
+                m_RightEditor = null;
+            }
+
+            m_Left = null;
+            m_Right = null;
+
+            m_UnequalMessage = "";
         }
 
         private void OnGUI()

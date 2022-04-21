@@ -336,6 +336,8 @@ namespace UnityCompare
 
             m_LeftView.Reload();
             m_RightView.Reload();
+
+            CompareInspector.ClearWindow();
         }
     }
 }
