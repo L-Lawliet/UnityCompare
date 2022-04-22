@@ -182,6 +182,107 @@ namespace UnityCompare
             CompareInspector.GetWindow(item.info, item.info.leftComponent, item.info.rightComponent);
         }
 
+        protected override void ContextClickedItem(int id)
+        {
+            GenericMenu menu = new GenericMenu();
+
+            var item = FindItem(id, m_Root) as CompareTreeViewItem<ComponentCompareInfo>;
+
+            var info = item.info;
+
+            if (info.missType != MissType.allExist)
+            {
+                if (info.missType == MissType.missLeft)
+                {
+                    if (m_IsLeft)
+                    {
+                        menu.AddItem(m_Styles.menuRemoveContent, false, MenuRemoveHandle, info);
+                    }
+                    else
+                    {
+                        menu.AddItem(m_Styles.menuCopyToTheLeftContent, false, MenuCopyHandle, info);
+                    }
+                }
+                else if (info.missType == MissType.missRight)
+                {
+                    if (m_IsLeft)
+                    {
+                        menu.AddItem(m_Styles.menuCopyToTheRightContent, false, MenuCopyHandle, info);
+                    }
+                    else
+                    {
+                        menu.AddItem(m_Styles.menuRemoveContent, false, MenuRemoveHandle, info);
+                    }
+                }
+            }
+            else
+            {
+                if (m_IsLeft)
+                {
+                    if (info.AllEqual())
+                    {
+                        menu.AddDisabledItem(m_Styles.menuCopyValueToTheRightContent);
+                    }
+                    else
+                    {
+                        menu.AddItem(m_Styles.menuCopyValueToTheRightContent, false, MenuCopyValueHandle, info);
+                    }
+                    
+                }
+                else
+                {
+                    if (info.AllEqual())
+                    {
+                        menu.AddDisabledItem(m_Styles.menuCopyValueToTheLeftContent);
+                    }
+                    else
+                    {
+                        menu.AddItem(m_Styles.menuCopyValueToTheLeftContent, false, MenuCopyValueHandle, info);
+                    }   
+                }
+            }
+
+            menu.ShowAsContext();
+        }
+
+        private void MenuRemoveHandle(object target)
+        {
+            ComponentCompareInfo info = target as ComponentCompareInfo;
+
+            bool removeLeft = !m_IsLeft; //删除菜单在缺失的一边发起，因此需要删除的位置与发起位置刚好相反。
+
+            CompareUtility.RemoveComponent(removeLeft, info);
+
+            if (CompareData.CompareCall != null)
+            {
+                CompareData.CompareCall.Invoke();
+            }
+        }
+
+        private void MenuCopyHandle(object target)
+        {
+            ComponentCompareInfo info = target as ComponentCompareInfo;
+
+            CompareUtility.AddComponent(m_IsLeft, info);
+
+            if (CompareData.CompareCall != null)
+            {
+                CompareData.CompareCall.Invoke();
+            }
+        }
+
+        private void MenuCopyValueHandle(object target)
+        {
+            ComponentCompareInfo info = target as ComponentCompareInfo;
+
+            CompareUtility.CopyComponentValue(m_IsLeft, info);
+
+            if (CompareData.CompareCall != null)
+            {
+                CompareData.CompareCall.Invoke();
+            }
+        }
+
         protected override void ExpandedStateChanged()
         {
             base.ExpandedStateChanged();

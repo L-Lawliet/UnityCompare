@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using UnityEditor;
+using UnityEditorInternal;
 using UnityEngine;
 
 /// <summary>
@@ -862,6 +863,165 @@ namespace UnityCompare
             if (lastSiblingIndex != -1)
             {
                 copy.transform.SetSiblingIndex(lastSiblingIndex + 1);
+            }
+
+            PrefabUtility.SaveAsPrefabAsset(root, path);
+        }
+
+        /// <summary>
+        /// 删除Component
+        /// </summary>
+        /// <param name="left">需要删除的位置（对比组的左边或者右边）</param>
+        /// <param name="info">删除项</param>
+        public static void RemoveComponent(bool left, ComponentCompareInfo info)
+        {
+            string path = "";
+            GameObject root = null;
+            Component removeTarget;
+
+            if (left)
+            {
+                path = CompareData.leftPrefabPath;
+                root = CompareData.leftPrefabContent;
+                removeTarget = info.leftComponent;
+            }
+            else
+            {
+                path = CompareData.rightPrefabPath;
+                root = CompareData.rightPrefabContent;
+                removeTarget = info.rightComponent;
+            }
+
+            GameObject.DestroyImmediate(removeTarget);
+
+            PrefabUtility.SaveAsPrefabAsset(root, path);
+        }
+
+        /// <summary>
+        /// 添加Component
+        /// 把左边（右边）拷贝添加到右边（左边）
+        /// </summary>
+        /// <param name="leftToRight"></param>
+        /// <param name="info"></param>
+        public static void AddComponent(bool leftToRight, ComponentCompareInfo info)
+        {
+            GameObjectCompareInfo parent = (info.parent as GameObjectCompareInfo);
+
+            if (parent == null)
+            {
+                return;
+            }
+
+            string path = "";
+            GameObject root = null;
+            Component target;
+            GameObject parentTarget;
+
+            if (leftToRight)
+            {
+                path = CompareData.rightPrefabPath;
+                root = CompareData.rightPrefabContent;
+                target = info.leftComponent;
+                parentTarget = parent.rightGameObject;
+            }
+            else
+            {
+                path = CompareData.leftPrefabPath;
+                root = CompareData.leftPrefabContent;
+                target = info.rightComponent;
+                parentTarget = parent.leftGameObject;
+            }
+
+            if (target == null || parentTarget == null)
+            {
+                return;
+            }
+
+            if(!ComponentUtility.CopyComponent(target) || !ComponentUtility.PasteComponentAsNew(parentTarget))
+            {
+                //任何一次操作失败，都返回
+                return;
+            }
+
+            parentTarget.GetComponents<Component>(m_LeftComponentList);
+
+            Component newComponent = m_LeftComponentList[m_LeftComponentList.Count - 1];
+
+            int count = parent.components.Count;
+
+            for (int i = 0; i < count; i++)
+            {
+                int index = count - i - 1;
+
+                ComponentCompareInfo currentInfo = parent.components[index];
+
+                if(info == currentInfo)
+                {
+                    break;
+                }
+
+                if (currentInfo.missType == MissType.allExist)
+                {
+                    ComponentUtility.MoveComponentUp(newComponent);
+                }
+                else if(currentInfo.missType == MissType.missLeft && leftToRight)
+                {
+                    ComponentUtility.MoveComponentUp(newComponent);
+                }
+                else if (currentInfo.missType == MissType.missRight && !leftToRight)
+                {
+                    ComponentUtility.MoveComponentUp(newComponent);
+                }
+            }
+
+            PrefabUtility.SaveAsPrefabAsset(root, path);
+        }
+
+        /// <summary>
+        /// 添加Component
+        /// 把左边（右边）拷贝添加到右边（左边）
+        /// </summary>
+        /// <param name="leftToRight"></param>
+        /// <param name="info"></param>
+        public static void CopyComponentValue(bool leftToRight, ComponentCompareInfo info)
+        {
+            GameObjectCompareInfo parent = (info.parent as GameObjectCompareInfo);
+
+            if (parent == null)
+            {
+                return;
+            }
+
+            string path = "";
+            GameObject root = null;
+            Component to;
+            Component from;
+
+
+            if (leftToRight)
+            {
+                path = CompareData.rightPrefabPath;
+                root = CompareData.rightPrefabContent;
+                to = info.leftComponent;
+                from = info.rightComponent;
+            }
+            else
+            {
+                path = CompareData.leftPrefabPath;
+                root = CompareData.leftPrefabContent;
+                to = info.rightComponent;
+                from = info.leftComponent;
+            }
+
+            if (to == null || from == null)
+            {
+                return;
+            }
+
+            if (!ComponentUtility.CopyComponent(to) || !ComponentUtility.PasteComponentValues(from))
+            {
+                //任何一次操作失败，都返回
+                return;
             }
 
             PrefabUtility.SaveAsPrefabAsset(root, path);

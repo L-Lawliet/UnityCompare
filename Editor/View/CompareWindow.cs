@@ -334,6 +334,8 @@ namespace UnityCompare
 
             CompareData.rootInfo = CompareUtility.ComparePrefab(CompareData.leftPrefabContent, CompareData.rightPrefabContent);
 
+            CompareData.showComponentView = false;
+
             m_LeftView.Reload();
             m_RightView.Reload();
 

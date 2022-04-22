@@ -53,6 +53,8 @@ namespace UnityCompare
 
         public readonly GUIContent menuCopyValueToTheRightContent = new GUIContent("Copy value to the Right");
 
+        public readonly GUIContent menuInspectComponentsContent = new GUIContent("Inspect Components");
+
         #endregion 
     }
 }
