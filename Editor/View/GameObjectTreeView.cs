@@ -161,7 +161,7 @@ namespace UnityCompare
 
             Rect rect = args.rowRect;
 
-            var iconSize = 20;
+            var interval = 2;
 
             Rect iconRect = new Rect(rect.x + GetContentIndent(item), rect.y, rect.height, rect.height);
 
@@ -182,8 +182,14 @@ namespace UnityCompare
                 GUI.DrawTexture(iconRect, styles.successImg, ScaleMode.ScaleToFit);
             }
 
-            rect.x += rect.height;
-            rect.width -= rect.height;
+            var gameObjectIcon = PrefabUtility.GetIconForGameObject(info.leftGameObject);
+
+            iconRect.x += iconRect.width + interval;
+
+            GUI.DrawTexture(iconRect, gameObjectIcon, ScaleMode.ScaleToFit);
+
+            rect.width -= iconRect.width * 2 + interval;
+            rect.x += iconRect.width * 2 + interval;
             args.rowRect = rect;
 
             base.RowGUI(args);
