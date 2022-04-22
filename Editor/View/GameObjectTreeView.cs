@@ -208,8 +208,12 @@ namespace UnityCompare
 
             var info = item.info;
 
+            menu.AddItem(m_Styles.menuInspectComponentsContent, false, MenuInspectHandle, id);
+
             if (info.missType != MissType.allExist)
             {
+                menu.AddSeparator("");
+
                 if (info.missType == MissType.missLeft)
                 {
                     if (m_IsLeft)
@@ -233,8 +237,13 @@ namespace UnityCompare
                     }
                 }
             }
-           
+
             menu.ShowAsContext();
+        }
+
+        private void MenuInspectHandle(object id)
+        {
+            Inspect((int)id);
         }
 
         private void MenuRemoveHandle(object target)
@@ -267,7 +276,12 @@ namespace UnityCompare
         {
             base.DoubleClickedItem(id);
 
-            if(onDoubleClickItem != null)
+            Inspect(id);
+        }
+
+        private void Inspect(int id)
+        {
+            if (onDoubleClickItem != null)
             {
                 var item = FindItem(id, m_Root) as CompareTreeViewItem<GameObjectCompareInfo>;
 
