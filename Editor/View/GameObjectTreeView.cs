@@ -163,33 +163,48 @@ namespace UnityCompare
 
             var interval = 2;
 
-            Rect iconRect = new Rect(rect.x + GetContentIndent(item), rect.y, rect.height, rect.height);
+            Rect stateIconRect = new Rect(rect.x + GetContentIndent(item), rect.y, rect.height, rect.height);
+
+            Rect goIconRect = new Rect(stateIconRect.x + stateIconRect.width + interval, stateIconRect.y, stateIconRect.width, stateIconRect.height);
 
             if (info.missType == MissType.allExist && !info.AllEqual())
             {
-                GUI.DrawTexture(iconRect, styles.failImg, ScaleMode.ScaleToFit);
+                GUI.DrawTexture(stateIconRect, styles.failImg, ScaleMode.ScaleToFit);
             }
             else if(info.missType == MissType.missRight && m_IsLeft)
             {
-                GUI.DrawTexture(iconRect, styles.inconclusiveImg, ScaleMode.ScaleToFit);
+                GUI.DrawTexture(stateIconRect, styles.inconclusiveImg, ScaleMode.ScaleToFit);
             }
             else if (info.missType == MissType.missLeft && !m_IsLeft)
             {
-                GUI.DrawTexture(iconRect, styles.inconclusiveImg, ScaleMode.ScaleToFit);
+                GUI.DrawTexture(stateIconRect, styles.inconclusiveImg, ScaleMode.ScaleToFit);
             }
             else if(!string.IsNullOrWhiteSpace(item.displayName))
             {
-                GUI.DrawTexture(iconRect, styles.successImg, ScaleMode.ScaleToFit);
+                GUI.DrawTexture(stateIconRect, styles.successImg, ScaleMode.ScaleToFit);
             }
 
-            var gameObjectIcon = PrefabUtility.GetIconForGameObject(info.leftGameObject);
+            if (m_IsLeft)
+            {
+                if(info.missType != MissType.missLeft)
+                {
+                    Texture2D gameObjectIcon = PrefabUtility.GetIconForGameObject(info.leftGameObject);
 
-            iconRect.x += iconRect.width + interval;
+                    GUI.DrawTexture(goIconRect, gameObjectIcon, ScaleMode.ScaleToFit);
+                }
+            }
+            else
+            {
+                if (info.missType != MissType.missRight)
+                {
+                    Texture2D gameObjectIcon = PrefabUtility.GetIconForGameObject(info.rightGameObject);
 
-            GUI.DrawTexture(iconRect, gameObjectIcon, ScaleMode.ScaleToFit);
+                    GUI.DrawTexture(goIconRect, gameObjectIcon, ScaleMode.ScaleToFit);
+                }
+            }
 
-            rect.width -= iconRect.width * 2 + interval;
-            rect.x += iconRect.width * 2 + interval;
+            rect.width -= stateIconRect.width + goIconRect.width + interval;
+            rect.x += stateIconRect.width + goIconRect.width + interval;
             args.rowRect = rect;
 
             base.RowGUI(args);
