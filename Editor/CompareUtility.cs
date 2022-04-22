@@ -333,7 +333,7 @@ namespace UnityCompare
                 {
                     for (int i = rightIndex; i < rightCount; i++)
                     {
-                        var rightComponent = m_RightComponentList[rightIndex];
+                        var rightComponent = m_RightComponentList[i];
 
                         var childInfo = AddComponentInfo(info, null, rightComponent, rightComponent.GetType().FullName, MissType.missLeft);
 
@@ -349,7 +349,7 @@ namespace UnityCompare
                 {
                     for (int i = leftIndex; i < leftCount; i++)
                     {
-                        var leftComponent = m_LeftComponentList[leftIndex];
+                        var leftComponent = m_LeftComponentList[i];
 
                         var childInfo = AddComponentInfo(info, leftComponent, null, leftComponent.GetType().FullName, MissType.missRight);
 
@@ -369,7 +369,7 @@ namespace UnityCompare
 
                     for (int i = rightIndex; i < rightCount; i++)
                     {
-                        var rightComponent = m_RightComponentList[leftIndex];
+                        var rightComponent = m_RightComponentList[i];
 
                         if (leftComponent.GetType() == rightComponent.GetType())
                         {
