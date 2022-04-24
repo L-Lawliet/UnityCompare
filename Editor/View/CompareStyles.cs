@@ -40,6 +40,9 @@ namespace UnityCompare
 
         public readonly GUIContent prevContent = new GUIContent("back", EditorGUIUtility.FindTexture("back"));
 
+        public readonly GUIContent defaultIgnoreLableContent = new GUIContent("Default Ignore List:");
+
+        public readonly GUIContent customIgnoreLableContent = new GUIContent("Custom Ignore List:");
 
         #region 菜单
 

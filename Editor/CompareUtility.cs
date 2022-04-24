@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
@@ -27,20 +28,6 @@ namespace UnityCompare
         /// ID计数器
         /// </summary>
         public static int idCounter;
-
-        /// <summary>
-        /// 忽略的路径数组
-        /// 当Component中的属性在此数组范围内，忽略对比
-        /// </summary>
-        public static string[] ingorePath = new string[]
-        {
-            "m_PrefabAsset",
-            "m_GameObject",
-            "m_Father",
-            "m_Children",
-            "m_PrefabInstance",
-            "m_RootOrder",
-        };
 
         /// <summary>
         /// 属性对比器
@@ -491,7 +478,7 @@ namespace UnityCompare
 
                         var path = property.propertyPath;
 
-                        if (string.IsNullOrWhiteSpace(path) || IsIngorePath(path))
+                        if (string.IsNullOrWhiteSpace(path) || IsIgnorePath(path))
                         {
                             continue;
                         }
@@ -1075,13 +1062,44 @@ namespace UnityCompare
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        private static bool IsIngorePath(string path)
+        private static bool IsIgnorePath(string path)
         {
-            for (int i = 0; i < ingorePath.Length; i++)
+            if(MatchIgnores(path, CompareData.defaultIgnores))
             {
-                if (path.StartsWith(ingorePath[i]))
+                return true;
+            }
+
+            if(MatchIgnores(path, CompareData.customIgnores))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// 匹配忽略元素
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        private static bool MatchIgnores(string path, List<IgnoreProperty> list)
+        {
+            if(list == null)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                var ignorePrpoerty = list[i];
+
+                if (ignorePrpoerty.on && !string.IsNullOrWhiteSpace(ignorePrpoerty.pattern))
                 {
-                    return true;
+                    if (ignorePrpoerty.regex.IsMatch(path))
+                    {
+                        return true;
+                    }
                 }
             }
 

@@ -267,6 +267,13 @@ namespace UnityCompare
                 }
             }
 
+            GUILayout.Space(10);
+
+            if (GUILayout.Button("Setting", styles.styleToolButton, GUILayout.Width(50.0f)))
+            {
+                CompareSettingWindow.OpenWindow();
+            }
+
             EditorGUILayout.EndHorizontal();
         }
 

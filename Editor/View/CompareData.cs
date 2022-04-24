@@ -173,6 +173,44 @@ namespace UnityCompare
         #region Field
 
         /// <summary>
+        /// 默认的PropertyPath忽略列表
+        /// 当Component中的属性使用此数组中的对象进行正则匹配，则不进行对比
+        /// </summary>
+        [SerializeField]
+        private readonly List<IgnoreProperty> m_DefaultIgnores = new List<IgnoreProperty>()
+        {
+            new IgnoreProperty("m_PrefabAsset"),
+            new IgnoreProperty("m_GameObject"),
+            new IgnoreProperty("m_Father"),
+            new IgnoreProperty("m_Children"),
+            new IgnoreProperty("m_PrefabInstance"),
+            new IgnoreProperty("m_RootOrder"),
+        };
+
+        public static List<IgnoreProperty> defaultIgnores
+        {
+            get
+            {
+                return m_Instance.m_DefaultIgnores;
+            }
+        }
+
+        /// <summary>
+        /// 自定义的PropertyPath忽略列表
+        /// 当Component中的属性使用此数组中的对象进行正则匹配，则不进行对比
+        /// </summary>
+        [SerializeField]
+        private readonly List<IgnoreProperty> m_CustomIgnores = new List<IgnoreProperty>();
+
+        public static List<IgnoreProperty> customIgnores
+        {
+            get
+            {
+                return m_Instance.m_CustomIgnores;
+            }
+        }
+
+        /// <summary>
         /// 是否显示相等项
         /// </summary>
         [SerializeField]
