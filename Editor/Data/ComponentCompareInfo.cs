@@ -61,8 +61,21 @@ namespace UnityCompare
         }
 
         /// <summary>
+        /// 保存忽略比对的Property path
+        /// </summary>
+        [SerializeField]
+        private List<string> m_IgnorePaths = new List<string>();
+
+        public List<string> ignorePaths
+        {
+            get { return m_IgnorePaths; }
+            set { m_IgnorePaths = value; }
+        }
+
+        /// <summary>
         /// 保存不相等的Property path
         /// </summary>
+        [SerializeField]
         private List<string> m_UnequalPaths = new List<string>();
 
         public List<string> unequalPaths
@@ -86,14 +99,32 @@ namespace UnityCompare
         /// <returns></returns>
         public override string GetUnequalMessage()
         {
+            return GetMessage(m_UnequalPaths);
+        }
+
+        /// <summary>
+        /// 返回不相等的提示信息
+        /// </summary>
+        /// <returns></returns>
+        public string GetIgnoreMessage()
+        {
+            if(missType != MissType.allExist)
+            {
+                return "";
+            }
+            return GetMessage(m_IgnorePaths);
+        }
+
+        private string GetMessage(List<string> paths)
+        {
             BUILDER_BUFFER.Clear();
 
             if (missType == MissType.allExist)
             {
-                for (int i = 0; i < m_UnequalPaths.Count; i++)
+                for (int i = 0; i < paths.Count; i++)
                 {
                     BUILDER_BUFFER.Append("\t");
-                    BUILDER_BUFFER.AppendLine(m_UnequalPaths[i]);
+                    BUILDER_BUFFER.AppendLine(paths[i]);
                 }
             }
             else

@@ -478,8 +478,14 @@ namespace UnityCompare
 
                         var path = property.propertyPath;
 
-                        if (string.IsNullOrWhiteSpace(path) || IsIgnorePath(path))
+                        if (string.IsNullOrWhiteSpace(path))
                         {
+                            continue;
+                        }
+
+                        if(IsIgnorePath(path))
+                        {
+                            info.ignorePaths.Add(path);
                             continue;
                         }
 

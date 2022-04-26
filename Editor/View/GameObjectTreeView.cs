@@ -186,7 +186,7 @@ namespace UnityCompare
 
             if (m_IsLeft)
             {
-                if(info.missType != MissType.missLeft)
+                if(info.missType != MissType.missLeft && info.leftGameObject != null)
                 {
                     Texture2D gameObjectIcon = PrefabUtility.GetIconForGameObject(info.leftGameObject);
 
@@ -195,7 +195,7 @@ namespace UnityCompare
             }
             else
             {
-                if (info.missType != MissType.missRight)
+                if (info.missType != MissType.missRight && info.leftGameObject != null)
                 {
                     Texture2D gameObjectIcon = PrefabUtility.GetIconForGameObject(info.rightGameObject);
 

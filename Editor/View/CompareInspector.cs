@@ -79,6 +79,18 @@ namespace UnityCompare
         private string m_UnequalMessage;
 
         /// <summary>
+        /// 忽略对比的属性信息
+        /// </summary>
+        [SerializeField]
+        private string m_IgnoreMessage;
+
+        [SerializeField]
+        private Vector2 m_UnequalBoxScroll;
+
+        [SerializeField]
+        private Vector2 m_IgnoreBoxScroll;
+
+        /// <summary>
         /// 设置对比的对象
         /// </summary>
         /// <param name="left"></param>
@@ -124,6 +136,8 @@ namespace UnityCompare
         /// <param name="info"></param>
         private void SetInfo(CompareInfo info)
         {
+            StringBuilder builder = new StringBuilder();
+
             string unequalMessage = info.GetUnequalMessage();
 
             if (string.IsNullOrWhiteSpace(unequalMessage))
@@ -132,13 +146,35 @@ namespace UnityCompare
             }
             else
             {
-                StringBuilder builder = new StringBuilder();
+                builder.Clear();
 
                 builder.AppendLine("no equal item:");
 
-                builder.AppendLine(info.GetUnequalMessage());
+                builder.AppendLine(unequalMessage);
 
                 m_UnequalMessage = builder.ToString();
+            }
+
+            string ignoreMessage = "";
+
+            if(info is ComponentCompareInfo)
+            {
+                ignoreMessage = (info as ComponentCompareInfo).GetIgnoreMessage();
+            }
+
+            if (string.IsNullOrWhiteSpace(ignoreMessage))
+            {
+                m_IgnoreMessage = "";
+            }
+            else
+            {
+                builder.Clear();
+
+                builder.AppendLine("ignore item:");
+
+                builder.AppendLine(ignoreMessage);
+
+                m_IgnoreMessage = builder.ToString();
             }
         }
 
@@ -210,7 +246,7 @@ namespace UnityCompare
                 //CompareUtility.PrintProperty(m_LeftEditor.serializedObject, m_RightEditor.serializedObject);
             }*/
 
-            OnUnequalMessage();
+            OnMessage();
         }
 
         /// <summary>
@@ -253,14 +289,27 @@ namespace UnityCompare
         }
 
         /// <summary>
-        /// 不相等提示信息的绘制
+        /// 提示信息的绘制
         /// </summary>
-        private void OnUnequalMessage()
+        private void OnMessage()
         {
+            EditorGUILayout.BeginHorizontal();
+
             if (!string.IsNullOrWhiteSpace(m_UnequalMessage))
             {
+                m_UnequalBoxScroll = EditorGUILayout.BeginScrollView(m_UnequalBoxScroll, GUILayout.MaxHeight(150));
                 EditorGUILayout.HelpBox(m_UnequalMessage, MessageType.Error);
+                EditorGUILayout.EndScrollView();
             }
+
+            if (!string.IsNullOrWhiteSpace(m_IgnoreMessage))
+            {
+                m_IgnoreBoxScroll = EditorGUILayout.BeginScrollView(m_IgnoreBoxScroll, GUILayout.MaxHeight(150));
+                EditorGUILayout.HelpBox(m_IgnoreMessage, MessageType.Warning);
+                EditorGUILayout.EndScrollView();
+            }
+
+            EditorGUILayout.EndHorizontal();
         }
     }
 }
