@@ -214,7 +214,7 @@ namespace UnityCompare
         /// 是否显示相等项
         /// </summary>
         [SerializeField]
-        private bool m_ShowEqual;
+        private bool m_ShowEqual = true;
 
         public static bool showEqual
         {
@@ -226,7 +226,7 @@ namespace UnityCompare
         /// 是否显示丢失的对象
         /// </summary>
         [SerializeField]
-        private bool m_ShowMiss;
+        private bool m_ShowMiss = true;
 
         public static bool showMiss
         {
