@@ -106,8 +106,7 @@ namespace UnityCompare
 
         private void OnDestroy()
         {
-
-            if (CompareData.leftPrefabContent != null)
+            /*if (CompareData.leftPrefabContent != null)
             {
                 PrefabUtility.UnloadPrefabContents(CompareData.leftPrefabContent);
                 CompareData.leftPrefabContent = null;
@@ -119,7 +118,7 @@ namespace UnityCompare
                 PrefabUtility.UnloadPrefabContents(CompareData.rightPrefabContent);
                 CompareData.rightPrefabContent = null;
                 CompareData.rightPrefabPath = "";
-            }
+            }*/
         }
 
         private void InitView(CompareView view)

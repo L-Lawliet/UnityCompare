@@ -104,6 +104,25 @@ namespace UnityCompare
         public CompareView(bool isLeft)
         {
             m_IsLeft = isLeft;
+
+            if (m_GameObject == null)
+            {
+                string prefabPath = "";
+
+                if (m_IsLeft)
+                {
+                    prefabPath = CompareData.leftPrefabPath;
+                }
+                else
+                {
+                    prefabPath = CompareData.rightPrefabPath;
+                }
+
+                if (!string.IsNullOrWhiteSpace(prefabPath))
+                {
+                    m_GameObject = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+                }
+            }
         }
 
         public void Init()
@@ -145,7 +164,7 @@ namespace UnityCompare
         {
             if (CompareData.showComponentView)
             {
-                if (CompareData.showComponentTarget != null)
+                if (CompareData.showComponentTarget != null && m_GameObject != null)
                 {
                     styles.prevContent.text = string.Format("[{0}]\t{1}", m_GameObject.name, CompareData.showComponentTarget.name);
                 }
