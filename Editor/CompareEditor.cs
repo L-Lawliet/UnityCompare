@@ -36,25 +36,5 @@ namespace UnityCompare
                 CompareWindow.ComparePrefab(left, right);
             }
         }
-
-        [MenuItem("Assets/RemoveTest")]
-        static void RemoveTest()
-        {
-            var select = Selection.activeGameObject;
-
-            if(select != null)
-            {
-                var path = AssetDatabase.GetAssetPath(select);
-
-                var content = PrefabUtility.LoadPrefabContents(path);
-
-                var cube = content.transform.Find("Cube (3)");
-
-                DestroyImmediate(cube.gameObject);
-
-                PrefabUtility.SaveAsPrefabAsset(content, path);
-                PrefabUtility.UnloadPrefabContents(content);
-            }
-        }
     }
 }
