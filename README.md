@@ -12,11 +12,11 @@
 
 ## Wiki
 
-- [Home]("https://github.com/L-Lawliet/UnityCompare/wiki/Home")
-- [Attention]("https://github.com/L-Lawliet/UnityCompare/wiki/Attention")
-- [Definition]("https://github.com/L-Lawliet/UnityCompare/wiki/Definition")
-- [Operate]("https://github.com/L-Lawliet/UnityCompare/wiki/Operate")
-- [View]("https://github.com/L-Lawliet/UnityCompare/wiki/View")
+- [Home](https://github.com/L-Lawliet/UnityCompare/wiki/Attention)
+- [Attention](https://github.com/L-Lawliet/UnityCompare/wiki/Attention)
+- [Definition](https://github.com/L-Lawliet/UnityCompare/wiki/Definition)
+- [Operate](https://github.com/L-Lawliet/UnityCompare/wiki/Operate)
+- [View](https://github.com/L-Lawliet/UnityCompare/wiki/View)
 
 ## 操作演示
 
