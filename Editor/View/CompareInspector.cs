@@ -148,7 +148,7 @@ namespace UnityCompare
             {
                 builder.Clear();
 
-                builder.AppendLine("no equal item:");
+                builder.AppendLine("different items:");
 
                 builder.AppendLine(unequalMessage);
 
@@ -170,7 +170,7 @@ namespace UnityCompare
             {
                 builder.Clear();
 
-                builder.AppendLine("ignore item:");
+                builder.AppendLine("ignore items:");
 
                 builder.AppendLine(ignoreMessage);
 
